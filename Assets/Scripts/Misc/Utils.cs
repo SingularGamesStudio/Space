@@ -98,7 +98,7 @@ public static class Utils
         return false;
     }
     public static bool PointInSquare(Vector2 a, int size, Vector2 x) {
-        if (x.x >= a.x && x.x <= a.x + size && x.y >= a.y && x.y <= a.y + size)
+        if (x.x >= a.x && x.x < a.x + size && x.y >= a.y && x.y < a.y + size)
             return true;
         return false;
     }

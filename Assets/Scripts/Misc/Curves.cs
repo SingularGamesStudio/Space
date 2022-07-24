@@ -50,6 +50,12 @@ public static class Curves
         }
         return Points;
     }
+    /// <summary>
+    /// A flat line at <Height> with <Accuracy> number of points
+    /// </summary>
+    /// <param name="Height"></param>
+    /// <param name="Accuracy"></param>
+    /// <returns></returns>
     public static List<float> Curve_Square(int Height, int Accuracy) {
         List<float> Res = new List<float>();
         if (Accuracy < 2) {
@@ -61,4 +67,31 @@ public static class Curves
         }
         return Res;
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Intensity">number of points between slopes (0 - most intense)</param>
+    /// <param name="Magnitude">height of the curve</param>
+    /// <param name="Length">number of points in curve</param>
+    /// <returns></returns>
+    public static List<float> Curve_Perlin(int Intensity, float Magnitude, int Length)
+	{
+        Intensity++;
+        List<float> Res = new List<float>();
+        float SlopeL = Random.Range(-1, 1);
+        float SlopeR = Random.Range(-1, 1);
+        for (int i = 0; i < Length; i++) {
+            if (i % Intensity == 0) {
+                SlopeL = SlopeR;
+                SlopeR = Random.Range(-1, 1);
+            }
+            float dist = ((float)(i % Intensity)) / Intensity;
+            float PosL = SlopeL * dist;
+            float PosR = -SlopeR * (1f - dist);
+            float u = dist * dist * (3f - 2f * dist);
+            float val = (PosL * (1f - u)) + (PosR * u);  // interpolate
+            Res.Add(val*Magnitude);
+        }
+        return Res;
+	}
 }

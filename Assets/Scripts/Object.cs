@@ -20,12 +20,21 @@ public class Object : MonoBehaviour {
     private void Update() {
         if (Input.GetMouseButtonUp(0)) {
             Vector2 Pos = Utils.TransformPos(Camera.main.ScreenToWorldPoint(Input.mousePosition), transform, Size);
-            /*List<EdgePoint> Edge = GetEdge(new Vector2Int((int)Pos.x, (int)Pos.y), 300, 8);
+            List<EdgePoint> Edge = GetEdge(new Vector2Int((int)Pos.x, (int)Pos.y), 300, 8);
             if (Edge != null) {
-                List<Vector2> NewEdge = Curves.Shift(Edge, Curves.Curve_Square(10, 300));
+                List<float> Curve;
+                Curve = Curves.Curve_Square(20, 300);
+                Curve = Curves.Curve_Perlin(20, 1, 300);
+                
+                //foreach(float a in Curve)
+                 //   Debug.LogError(a);
+                List<Vector2> NewEdge = Curves.Shift(Edge, Curve);
+                for (int i = 0; i < 299; i++) {
+                    Debug.DrawLine(Utils.InverseTransformPos(NewEdge[i], transform, Size), Utils.InverseTransformPos(NewEdge[i+1], transform, Size), new Color(255, 0, 255), 1000f);
+                }
                 Transform(Edge, NewEdge);
-            }*/
-            Root.CircleFill(Pos, 20, new PixelState(0, false));
+            }
+            //Root.CircleFill(Pos, 20, new PixelState(0, false));
         }
     }
 
@@ -60,6 +69,8 @@ public class Object : MonoBehaviour {
                 }
             }
         }
+        if (Ans.x != -1 && Ans.y != -1)
+            return Ans + Point;
         return Ans;
     }
 
