@@ -12,6 +12,7 @@ public class Object : MonoBehaviour {
     void Start() {
         Root = new Tree(Size, this, new PixelState(0, true));
         Root.CircleFill(new Vector2(2048, 2048-100), 200, new PixelState(0, false));
+        //Root.TriangleFill(new Vector2(2048, 2048 - 100), new Vector2(3000, 2048+20), new Vector2(555, 666), new PixelState(0, false));
         Root.CircleFill(new Vector2(604, 300), 110, new PixelState(0, false));
         Root.CircleFill(new Vector2(704, 500), 230, new PixelState(0, true));
         Root.TriangleFill(new Vector2(100, 510), new Vector2(435, 128), new Vector2(555, 666), new PixelState(0, false));
@@ -23,18 +24,12 @@ public class Object : MonoBehaviour {
             List<EdgePoint> Edge = GetEdge(new Vector2Int((int)Pos.x, (int)Pos.y), 300, 8);
             if (Edge != null) {
                 List<float> Curve;
-                Curve = Curves.Curve_Square(20, 300);
-                Curve = Curves.Curve_Perlin(20, 1, 300);
-                
-                //foreach(float a in Curve)
-                 //   Debug.LogError(a);
+                //Curve = Curves.Curve_Square(100, 300);
+                Curve = Curves.Curve_Perlin(25, 100, 300);
                 List<Vector2> NewEdge = Curves.Shift(Edge, Curve);
-                for (int i = 0; i < 299; i++) {
-                    Debug.DrawLine(Utils.InverseTransformPos(NewEdge[i], transform, Size), Utils.InverseTransformPos(NewEdge[i+1], transform, Size), new Color(255, 0, 255), 1000f);
-                }
+                
                 Transform(Edge, NewEdge);
             }
-            //Root.CircleFill(Pos, 20, new PixelState(0, false));
         }
     }
 
@@ -51,9 +46,21 @@ public class Object : MonoBehaviour {
             }
             Last = Now;
         }
+        /*for (int i = 0; i < 299; i++) {
+            Debug.DrawLine(Utils.InverseTransformPos(Edge[i].Point, transform, Size), Utils.InverseTransformPos(Edge[i + 1].Point, transform, Size), new Color(255, 0, 255), 1000f);
+        }
+        for (int i = 0; i < 299; i++) {
+            Debug.DrawLine(Utils.InverseTransformPos(NewEdgeResized[i], transform, Size), Utils.InverseTransformPos(NewEdgeResized[i + 1], transform, Size), new Color(255, 255, 255), 1000f);
+        }*/
         for (int i = 2; i < Edge.Count-2; i++) {
-            Root.TriangleFill(Edge[i - 2].Point, Edge[i + 2].Point, NewEdgeResized[i - 2], new PixelState(0, true));
-            Root.TriangleFill(NewEdgeResized[i - 2], NewEdgeResized[i + 2], Edge[i + 2].Point, new PixelState(0, true));
+            Debug.DrawLine(Utils.InverseTransformPos(Edge[i - 1].Point, transform, Size), Utils.InverseTransformPos(Edge[i].Point, transform, Size), new Color(255, 0, 0), 1000f);
+            Debug.DrawLine(Utils.InverseTransformPos(Edge[i - 1].Point, transform, Size), Utils.InverseTransformPos(NewEdgeResized[i - 1], transform, Size), new Color(255, 0, 0), 1000f);
+            Debug.DrawLine(Utils.InverseTransformPos(NewEdgeResized[i - 1], transform, Size), Utils.InverseTransformPos(Edge[i].Point, transform, Size), new Color(255, 0, 0), 1000f);
+            Debug.DrawLine(Utils.InverseTransformPos(NewEdgeResized[i - 1], transform, Size), Utils.InverseTransformPos(NewEdgeResized[i], transform, Size), new Color(255, 0, 0), 1000f);
+            Debug.DrawLine(Utils.InverseTransformPos(Edge[i].Point, transform, Size), Utils.InverseTransformPos(NewEdgeResized[i], transform, Size), new Color(255, 0, 0), 1000f);
+            
+            Root.TriangleFill(Edge[i - 1].Point, Edge[i].Point, NewEdgeResized[i - 1], new PixelState(0, true));
+            Root.TriangleFill(NewEdgeResized[i - 1], NewEdgeResized[i], Edge[i].Point, new PixelState(0, true));
         }
     }
 

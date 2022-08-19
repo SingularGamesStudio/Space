@@ -47,6 +47,10 @@ public static class Utils
         return false;
     }
     public static bool SegmentCrossesSquare(Vector2 s1, Vector2 s2, Vector2 a, int size) {
+        if (PointInSquare(a, size, s1))
+            return true;
+        if (PointInSquare(a, size, s2))
+            return true;
         if (s1.x > s2.x) {
             Vector2 temp = s1;
             s1 = s2;
@@ -81,8 +85,6 @@ public static class Utils
                 return true;
             }
         }
-        if (PointInSquare(a, size, s1))
-            return true;
         return false;
     }
     public static Tuple<Vector2, Vector2> SquaresIntersect(Vector2 a, int aSize, Vector2 b, int bSize) { 

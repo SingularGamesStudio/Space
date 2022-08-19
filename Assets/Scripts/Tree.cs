@@ -109,7 +109,7 @@ public class Tree {
             }
         }
         if(Color!=null)
-            InitChildren(NewColor);
+            InitChildren(Color);
         Color = null;
         PixelState[] Returned = { null, null, null, null };
         for (int i = 0; i<4; i++) {
@@ -118,7 +118,8 @@ public class Tree {
                 Returned[0] = null;
         }
         if (Returned[0] != null) {
-            Update(NewColor);
+            Update(Returned[0]);
+            return Color;
         }
         return Color;
     }
@@ -151,7 +152,7 @@ public class Tree {
             return Color;
         }
         if (Color != null)
-            InitChildren(NewColor);
+            InitChildren(Color);
         Color = null;
         PixelState[] Returned = { null, null, null, null };
         for (int i = 0; i < 4; i++) {
@@ -160,7 +161,8 @@ public class Tree {
                 Returned[0] = null;
         }
         if (Returned[0] != null) {
-            Update(NewColor);
+            Update(Returned[0]);
+            return Color;
         }
         return Color;
     }

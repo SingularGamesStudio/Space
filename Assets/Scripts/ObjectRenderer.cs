@@ -11,55 +11,49 @@ public class ObjectRenderer : MonoBehaviour
     public int CellSize;// must be a big enough power of 2, more than VisionRange*2
     public List<RenderArea> Cells = new List<RenderArea>();
     public class RenderArea {
-        public Texture2D Tex;
+        public RenderTexture Tex;
+        public Material Mat;
         public PixelState[,] RealTex;
         public Vector2Int Pos;
-        public SpriteRenderer Instance;
+        public MeshRenderer Instance;
         public int Size;
         public RenderArea(Vector2Int Pos, int Size, ObjectRenderer Parent) {
             this.Pos = Pos;
             this.Size = Size;
-            Tex = new Texture2D(Size, Size, TextureFormat.RGBA32, false);
+            Tex = new RenderTexture(Size, Size, 0);
             RealTex = new PixelState[Size, Size];
-            Color[] temp = new Color[Size*Size];
             for (int i = 0; i < Size * Size; i++) {
-                temp[i] = new Color(255, 255, 255, 0);
                 RealTex[i % Size, i / Size] = new PixelState(0, false);
             }
-            Tex.SetPixels(temp);
-            Instance = Instantiate(Data.Main.ObjectRenderer).GetComponent<SpriteRenderer>();
+            Instance = Instantiate(Data.Main.ObjectRenderer).GetComponent<MeshRenderer>();
+            Mat = new Material(Shader.Find("Standard"));
+            Mat.mainTexture = Tex;
+            Instance.material = Mat;
             Instance.transform.position = Utils.InverseTransformPos(Pos+new Vector2Int(Size/2, Size/2), Parent.transform, Parent.Parent.Size);
-            Instance.sprite = Sprite.Create(Tex, new Rect(0.0f, 0.0f, Tex.width, Tex.height), new Vector2(0.5f, 0.5f));
+            Instance.transform.localScale = Vector3.one/1000f*((float)Size);
         }
         public void Draw(Tree Cur) {
-            float TStart = Time.realtimeSinceStartup;
-            float ttex = 0;
-            float tchange = 0;
             Tuple<Vector2, Vector2> Box = Utils.SquaresIntersect(Cur.Pos, Cur.Size, Pos, Size);
             if (Box == null) return;
             if (Cur.Color != null) {
+                Rect temp = new Rect(Box.Item1.x, Box.Item1.y, Box.Item2.x - Box.Item1.x, Box.Item2.y - Box.Item1.y);
+                Sprite sp = Sprite.Create(Data.Main.Textures[Cur.Color.TextureID], temp, (Box.Item1 + Box.Item2) / 2f);
                 
-                for (int i = (int)Math.Round(Box.Item1.x); i < (int)Math.Round(Box.Item2.x); i++) {
+                /*for (int i = (int)Math.Round(Box.Item1.x); i < (int)Math.Round(Box.Item2.x); i++) {
                     for (int j = (int)Math.Round(Box.Item1.y); j < (int)Math.Round(Box.Item2.y); j++) {
                         Color color = Data.Main.Textures[Cur.Color.TextureID].GetPixel(i % Data.Main.Textures[Cur.Color.TextureID].width, j % Data.Main.Textures[Cur.Color.TextureID].height);
-                        float t1 = Time.realtimeSinceStartup;
                         if (!Cur.Color.Active)
                             color.a = 0;
                         RealTex[i - Pos.x, j - Pos.y] = Cur.Color;
-                        t1 = Time.realtimeSinceStartup;
                         Tex.SetPixel(i - Pos.x, j - Pos.y, color);
-                        tchange += Time.realtimeSinceStartup - t1;
                     }
-                }
+                }*/
             }
             else {
                 foreach (Tree Child in Cur.Children) {
                     Draw(Child);
                 }
             }
-            Tex.Apply();
-            if (TStart > 5)
-                Debug.Log("Time on texture change: "+ttex.ToString()+" Time on array change: "+tchange);
         }
     }
     private void Update() {
