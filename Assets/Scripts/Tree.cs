@@ -41,7 +41,7 @@ public class Tree {
         if (Color != null)
             return this;
         if (Point.x >= Pos.x + Size / 2) {
-            if (Point.y >= Pos.x + Size / 2) {
+            if (Point.y >= Pos.y + Size / 2) {
                 return Children[3].Locate(Point);
             }
             else {
@@ -49,7 +49,7 @@ public class Tree {
             }
         }
         else {
-            if (Point.y >= Pos.x + Size / 2) {
+            if (Point.y >= Pos.y + Size / 2) {
                 return Children[2].Locate(Point);
             }
             else {

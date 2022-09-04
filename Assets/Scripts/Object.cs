@@ -19,13 +19,14 @@ public class Object : MonoBehaviour {
         Root.TriangleFill(new Vector2(345, 923), new Vector2(111, 111), new Vector2(654, 0), new PixelState(0, true));
     }
     private void Update() {
+        Root.CircleFill(new Vector2(2048+UnityEngine.Random.RandomRange(-500, 500), 2048 + UnityEngine.Random.RandomRange(-1000, 1000)), 300, new PixelState(0, UnityEngine.Random.RandomRange(-1000, 1000)>0));
         if (Input.GetMouseButtonUp(0)) {
             Vector2 Pos = Utils.TransformPos(Camera.main.ScreenToWorldPoint(Input.mousePosition), transform, Size);
             List<EdgePoint> Edge = GetEdge(new Vector2Int((int)Pos.x, (int)Pos.y), 300, 8);
             if (Edge != null) {
                 List<float> Curve;
-                //Curve = Curves.Curve_Square(100, 300);
-                Curve = Curves.Curve_Perlin(25, 100, 300);
+                Curve = Curves.Curve_Square(100, 300);
+                //Curve = Curves.Curve_Perlin(25, 100, 300);
                 List<Vector2> NewEdge = Curves.Shift(Edge, Curve);
                 
                 Transform(Edge, NewEdge);
@@ -53,12 +54,12 @@ public class Object : MonoBehaviour {
             Debug.DrawLine(Utils.InverseTransformPos(NewEdgeResized[i], transform, Size), Utils.InverseTransformPos(NewEdgeResized[i + 1], transform, Size), new Color(255, 255, 255), 1000f);
         }*/
         for (int i = 2; i < Edge.Count-2; i++) {
-            Debug.DrawLine(Utils.InverseTransformPos(Edge[i - 1].Point, transform, Size), Utils.InverseTransformPos(Edge[i].Point, transform, Size), new Color(255, 0, 0), 1000f);
+            /*Debug.DrawLine(Utils.InverseTransformPos(Edge[i - 1].Point, transform, Size), Utils.InverseTransformPos(Edge[i].Point, transform, Size), new Color(255, 0, 0), 1000f);
             Debug.DrawLine(Utils.InverseTransformPos(Edge[i - 1].Point, transform, Size), Utils.InverseTransformPos(NewEdgeResized[i - 1], transform, Size), new Color(255, 0, 0), 1000f);
             Debug.DrawLine(Utils.InverseTransformPos(NewEdgeResized[i - 1], transform, Size), Utils.InverseTransformPos(Edge[i].Point, transform, Size), new Color(255, 0, 0), 1000f);
             Debug.DrawLine(Utils.InverseTransformPos(NewEdgeResized[i - 1], transform, Size), Utils.InverseTransformPos(NewEdgeResized[i], transform, Size), new Color(255, 0, 0), 1000f);
             Debug.DrawLine(Utils.InverseTransformPos(Edge[i].Point, transform, Size), Utils.InverseTransformPos(NewEdgeResized[i], transform, Size), new Color(255, 0, 0), 1000f);
-            
+            */
             Root.TriangleFill(Edge[i - 1].Point, Edge[i].Point, NewEdgeResized[i - 1], new PixelState(0, true));
             Root.TriangleFill(NewEdgeResized[i - 1], NewEdgeResized[i], Edge[i].Point, new PixelState(0, true));
         }
