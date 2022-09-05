@@ -57,6 +57,13 @@ public class Tree {
             }
         }
     }
+    
+    public Tree LocateUp(Vector2 Point)
+    {
+        if(Utils.PointInSquare(Point, Size, Pos)) {
+            return Locate(Point);
+		} else return Parent.LocateUp(Point);
+    }
 
     public void Update(PixelState NewColor) {
         if (NewColor == null) {

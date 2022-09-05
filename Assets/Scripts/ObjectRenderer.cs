@@ -49,8 +49,11 @@ public class ObjectRenderer : MonoBehaviour
         }
     }
     private void Update() {
+        int cnt = 0;
         foreach(int id in DrawOrder) {
+            
             for (int id2 = 0; id2 < ShaderCuts[id].Count; id2++) {
+                cnt += ShaderCuts[id][id2].Count;
                 ToBeRendered[id] = false;
                 MaterialPropertyBlock block = new MaterialPropertyBlock();
                 block.SetVectorArray("_Rect", ShaderCuts[id][id2]);
@@ -60,7 +63,7 @@ public class ObjectRenderer : MonoBehaviour
             ShaderCuts[id].Clear();
         }
         DrawOrder.Clear();
-
+        Debug.Log(cnt);
 
         List<RenderArea> added = new List<RenderArea>();
         foreach (GameObject g in Tracking) {
@@ -87,9 +90,17 @@ public class ObjectRenderer : MonoBehaviour
             Draw(Parent.Root, added);
         }
     }
+    Tree LastRes = null;
     public PixelState GetPixel(int x, int y) {
+        
         Vector2 Pos = new Vector2(x, y);
-        return Parent.Root.Locate(Pos).Color;
+        if (LastRes == null) {
+            LastRes = Parent.Root.Locate(Pos);
+            return LastRes.Color;
+        } else {
+            LastRes = LastRes.LocateUp(Pos);
+            return LastRes.Color;
+        }
     }
     public PixelState GetPixel(Vector2Int Pos) {
         return Parent.Root.Locate(Pos).Color;
