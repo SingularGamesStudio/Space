@@ -34,7 +34,6 @@ public class Tree {
         }
         for (int i = 0; i < Children.Length; i++) {
             Children[i] = new Tree(this, Pos + Data.Main.Shifts01[i] * (Size / 2));
-            //Children[i].Update(NewColor);
         }
     }
     public Tree Locate(Vector2 Point) {
@@ -60,9 +59,10 @@ public class Tree {
     
     public Tree LocateUp(Vector2 Point)
     {
-        if(Utils.PointInSquare(Point, Size, Pos)) {
+        if (Utils.PointInSquare(Pos, Size, Point)) {
             return Locate(Point);
-		} else return Parent.LocateUp(Point);
+        }
+        else return Parent.LocateUp(Point);
     }
 
     public void Update(PixelState NewColor) {
@@ -125,7 +125,7 @@ public class Tree {
                 Returned[0] = null;
         }
         if (Returned[0] != null) {
-            Update(Returned[0]);
+            //Update(Returned[0]);TODO:FIX and return
             return Color;
         }
         return Color;
@@ -138,7 +138,7 @@ public class Tree {
         if (NewColor == Color)
             return Color;
         if (Size == 1) {
-            if (!Utils.PointInTriangle(A, B, C, Pos + Vector2.one * 0.5f)) {
+            if (!Utils.PointInTriangle(A, B, C, (Vector2)Pos + Vector2.one * 0.5f)) {
                 return Color;
             }
             else {
@@ -168,7 +168,7 @@ public class Tree {
                 Returned[0] = null;
         }
         if (Returned[0] != null) {
-            Update(Returned[0]);
+            //Update(Returned[0]);TODO:FIX and return
             return Color;
         }
         return Color;

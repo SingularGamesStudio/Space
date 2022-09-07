@@ -12,21 +12,19 @@ public class Object : MonoBehaviour {
     void Start() {
         Root = new Tree(Size, this, new PixelState(0, true));
         Root.CircleFill(new Vector2(2048, 2048-100), 200, new PixelState(0, false));
-        //Root.TriangleFill(new Vector2(2048, 2048 - 100), new Vector2(3000, 2048+20), new Vector2(555, 666), new PixelState(0, false));
         Root.CircleFill(new Vector2(604, 300), 110, new PixelState(0, false));
         Root.CircleFill(new Vector2(704, 500), 230, new PixelState(0, true));
         Root.TriangleFill(new Vector2(100, 510), new Vector2(435, 128), new Vector2(555, 666), new PixelState(0, false));
         Root.TriangleFill(new Vector2(345, 923), new Vector2(111, 111), new Vector2(654, 0), new PixelState(0, true));
     }
     private void Update() {
-        Root.CircleFill(new Vector2(2048+UnityEngine.Random.RandomRange(-500, 500), 2048 + UnityEngine.Random.RandomRange(-1000, 1000)), 300, new PixelState(0, UnityEngine.Random.RandomRange(-1000, 1000)>0));
         if (Input.GetMouseButtonUp(0)) {
             Vector2 Pos = Utils.TransformPos(Camera.main.ScreenToWorldPoint(Input.mousePosition), transform, Size);
             List<EdgePoint> Edge = GetEdge(new Vector2Int((int)Pos.x, (int)Pos.y), 300, 8);
             if (Edge != null) {
                 List<float> Curve;
-                Curve = Curves.Curve_Square(100, 300);
-                //Curve = Curves.Curve_Perlin(25, 100, 300);
+                //Curve = Curves.Curve_Square(100, 300);
+                Curve = Curves.Curve_Perlin(25, 100, 300);
                 List<Vector2> NewEdge = Curves.Shift(Edge, Curve);
                 
                 Transform(Edge, NewEdge);
@@ -47,19 +45,19 @@ public class Object : MonoBehaviour {
             }
             Last = Now;
         }
-        /*for (int i = 0; i < 299; i++) {
+        for (int i = 0; i < 299; i++) {
             Debug.DrawLine(Utils.InverseTransformPos(Edge[i].Point, transform, Size), Utils.InverseTransformPos(Edge[i + 1].Point, transform, Size), new Color(255, 0, 255), 1000f);
         }
         for (int i = 0; i < 299; i++) {
-            Debug.DrawLine(Utils.InverseTransformPos(NewEdgeResized[i], transform, Size), Utils.InverseTransformPos(NewEdgeResized[i + 1], transform, Size), new Color(255, 255, 255), 1000f);
-        }*/
-        for (int i = 2; i < Edge.Count-2; i++) {
-            /*Debug.DrawLine(Utils.InverseTransformPos(Edge[i - 1].Point, transform, Size), Utils.InverseTransformPos(Edge[i].Point, transform, Size), new Color(255, 0, 0), 1000f);
+            Debug.DrawLine(Utils.InverseTransformPos(NewEdgeResized[i], transform, Size), Utils.InverseTransformPos(NewEdgeResized[i + 1], transform, Size), new Color(255, 255, 0), 1000f);
+        }
+        for (int i = 1; i < Edge.Count-2; i++) {
+            Debug.DrawLine(Utils.InverseTransformPos(Edge[i - 1].Point, transform, Size), Utils.InverseTransformPos(Edge[i].Point, transform, Size), new Color(255, 0, 0), 1000f);
             Debug.DrawLine(Utils.InverseTransformPos(Edge[i - 1].Point, transform, Size), Utils.InverseTransformPos(NewEdgeResized[i - 1], transform, Size), new Color(255, 0, 0), 1000f);
             Debug.DrawLine(Utils.InverseTransformPos(NewEdgeResized[i - 1], transform, Size), Utils.InverseTransformPos(Edge[i].Point, transform, Size), new Color(255, 0, 0), 1000f);
             Debug.DrawLine(Utils.InverseTransformPos(NewEdgeResized[i - 1], transform, Size), Utils.InverseTransformPos(NewEdgeResized[i], transform, Size), new Color(255, 0, 0), 1000f);
             Debug.DrawLine(Utils.InverseTransformPos(Edge[i].Point, transform, Size), Utils.InverseTransformPos(NewEdgeResized[i], transform, Size), new Color(255, 0, 0), 1000f);
-            */
+            
             Root.TriangleFill(Edge[i - 1].Point, Edge[i].Point, NewEdgeResized[i - 1], new PixelState(0, true));
             Root.TriangleFill(NewEdgeResized[i - 1], NewEdgeResized[i], Edge[i].Point, new PixelState(0, true));
         }
@@ -72,13 +70,11 @@ public class Object : MonoBehaviour {
                 Vector2Int Shift = new Vector2Int(x, y);
                 if (Renderer.GetPixel(Point+Shift).Active && Utils.Distance2(Ans, Point)> Utils.Distance2(new Vector2(x, y), Point)) {
                     if (!Renderer.GetPixel(Point + Shift+Data.Main.ShiftsLR[0]).Active || !Renderer.GetPixel(Point + Shift + Data.Main.ShiftsLR[1]).Active || !Renderer.GetPixel(Point + Shift + Data.Main.ShiftsLR[2]).Active || !Renderer.GetPixel(Point + Shift + Data.Main.ShiftsLR[3]).Active) {
-                        Ans = new Vector2Int(x, y);
+                        Ans = Point + Shift;
                     }
                 }
             }
         }
-        if (Ans.x != -1 && Ans.y != -1)
-            return Ans + Point;
         return Ans;
     }
 

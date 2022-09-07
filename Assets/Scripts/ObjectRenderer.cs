@@ -31,7 +31,7 @@ public class ObjectRenderer : MonoBehaviour
             Tex = new RenderTexture(Size, Size, 0);
             Rec.targetTexture = Tex;
             Instance = Instantiate(Data.Main.ObjectRenderer).GetComponent<MeshRenderer>();
-            Mat = new Material(Shader.Find("Standard"));
+            Mat = new Material(Shader.Find("Unlit/Texture"));
             Mat.mainTexture = Tex;
             Instance.material = Mat;
             Rec.gameObject.transform.position = Utils.InverseTransformPos(Pos + new Vector2(Size / 2f, Size / 2f), Parent.transform, Parent.Parent.Size)+new Vector2(100, 100);
@@ -48,7 +48,7 @@ public class ObjectRenderer : MonoBehaviour
             BasicPlane = Data.Main.EmptySprite.GetComponent<MeshFilter>().mesh;
         }
     }
-    private void Update() {
+    private void FixedUpdate() {
         int cnt = 0;
         foreach(int id in DrawOrder) {
             
@@ -64,7 +64,6 @@ public class ObjectRenderer : MonoBehaviour
         }
         DrawOrder.Clear();
         Debug.Log(cnt);
-
         List<RenderArea> added = new List<RenderArea>();
         foreach (GameObject g in Tracking) {
             for (int dx = -VisionRange; dx < VisionRange + CellSize; dx += CellSize) {

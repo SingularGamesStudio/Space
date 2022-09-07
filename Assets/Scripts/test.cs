@@ -1,22 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class test : MonoBehaviour
 {
-    Matrix4x4 tf = Matrix4x4.identity;
-    Mesh mesh;
-    public Material material;
-    // Start is called before the first frame update
-    void Start()
-    {
-        tf.SetTRS(new Vector3(0, 0), Quaternion.Euler(90, 90, -90), new Vector3(1, 1, 1));
-        mesh = gameObject.GetComponent<MeshFilter>().mesh;
+    Queue<float> fps = new Queue<float>();
+    float sum = 0;
+    private void Start() {
+        for (int i = 0; i < 10; i++) {
+            fps.Enqueue(0);
+        }
     }
-
-    // Update is called once per frame
     void Update()
     {
-        Graphics.DrawMesh(mesh, tf, material, 0);
+        sum += (1f / Time.deltaTime);
+        fps.Enqueue((1f / Time.deltaTime));
+        sum -= fps.Dequeue();
+        gameObject.GetComponent<Text>().text = (sum/10f).ToString();
     }
 }
