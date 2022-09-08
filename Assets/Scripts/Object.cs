@@ -23,14 +23,19 @@ public class Object : MonoBehaviour {
             List<EdgePoint> Edge = GetEdge(new Vector2Int((int)Pos.x, (int)Pos.y), 300, 8);
             if (Edge != null) {
                 List<float> Curve;
-                //Curve = Curves.Curve_Square(100, 300);
-                Curve = Curves.Curve_Perlin(25, 100, 300);
+                Curve = Curves.Curve_Square(100, 300);
+                //Curve = Curves.Curve_Perlin(25, 100, 300);
                 List<Vector2> NewEdge = Curves.Shift(Edge, Curve);
                 
                 Transform(Edge, NewEdge);
             }
         }
     }
+
+    public void InitPlanet()
+	{
+
+	}
 
     public void Transform(List<EdgePoint> Edge, List<Vector2> NewEdge) {
         float Delta = ((float)Edge.Count) / (NewEdge.Count - 1);

@@ -50,6 +50,8 @@ public static class Curves
         }
         return Points;
     }
+
+    
     /// <summary>
     /// A flat line at <Height> with <Accuracy> number of points
     /// </summary>
