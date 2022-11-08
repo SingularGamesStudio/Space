@@ -6,6 +6,6 @@ public class Biome
 {
     int MinSize;
     int MaxSize;
-    List<CurveClass> Base;
+    List<NoiseLayer> Base;
     
 }
