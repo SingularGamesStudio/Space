@@ -5,7 +5,7 @@ using System;
 
 public static class Utils
 {
-    public static Vector2 TransformPos(Vector3 WorldPos, SpriteRenderer Sprite) {
+	public static Vector2 TransformPos(Vector3 WorldPos, SpriteRenderer Sprite) {
         Vector2 Pos = Sprite.transform.InverseTransformPoint(WorldPos);
         Pos *= 100;
         Pos+=new Vector2(Sprite.sprite.texture.width, Sprite.sprite.texture.height)/2;

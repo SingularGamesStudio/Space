@@ -12,9 +12,4 @@ public static class Generator
 			return MakeBiome(Length, rnd.Next(100000), Biomes[0]);
 		}
 	}*/
-	public static List<Vector2> MakeBiome(int length, int seed, Biome cur)
-	{
-		System.Random rnd = new System.Random(seed);
-		
-	}
 }

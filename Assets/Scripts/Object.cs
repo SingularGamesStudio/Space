@@ -8,6 +8,7 @@ public class Object : MonoBehaviour {
     public int Size = 256;
     public bool DebugMode;
     public ObjectRenderer Renderer;
+    public Biome biome;
     
     void Start() {
         Root = new Tree(Size, this, new PixelState(0, true));
@@ -32,9 +33,10 @@ public class Object : MonoBehaviour {
         }
     }
 
-    public void InitPlanet()
+    public void InitPlanet(int seed)
 	{
-
+        biome = new Biome(Data.Main.Biomes[0]);
+        biome.Init(seed);
 	}
 
     public void Transform(List<EdgePoint> Edge, List<Vector2> NewEdge) {

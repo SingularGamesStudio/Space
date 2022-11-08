@@ -166,6 +166,27 @@ MonoBehaviour:
   Textures:
   - {fileID: 2800000, guid: f034a28b74bb2354d85472641e2c1657, type: 3}
   - {fileID: 2800000, guid: 5ae0443fa31f1a24d8e1442743cc4ea9, type: 3}
+  Biomes:
+  - name: Biome_1
+    Base:
+    - MinFrequency: 0
+      MaxFrequency: 0
+      MinAmplitude: 0
+      MaxAmplitude: 0
+      Base: 300
+      type: 0
+      Instance:
+        Frequency: 0
+        Amplitude: 0
+    - MinFrequency: 1
+      MaxFrequency: 1
+      MinAmplitude: 1
+      MaxAmplitude: 1
+      Base: 256
+      type: 1
+      Instance:
+        Frequency: 0
+        Amplitude: 0
   Materials:
   - {fileID: 2100000, guid: 5b59006ef939a9447844738cd0e4e862, type: 2}
   - {fileID: 2100000, guid: bc6dc0192ed3d69459c4b81601b3c3a3, type: 2}
@@ -618,6 +639,9 @@ MonoBehaviour:
   Size: 4096
   DebugMode: 1
   Renderer: {fileID: 2106544243}
+  biome:
+    name: 
+    Base: []
 --- !u!212 &2106544241
 SpriteRenderer:
   m_ObjectHideFlags: 0

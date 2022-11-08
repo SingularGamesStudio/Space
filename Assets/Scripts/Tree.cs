@@ -27,7 +27,53 @@ public class Tree {
         this.Root = Root;
         this.Color = Color;
     }
-    public void InitChildren(PixelState NewColor) {
+
+    public Tuple<PixelState, bool> BuildBiome(Biome biome)
+    {
+        if (biome.Floor.type != NoiseLayer.NoiseType.Linear) {
+            throw new FormatException("Biome floor must be a Linear function");
+        }
+		Vector2 Center = new Vector2(Parent.Size / 2, Parent.Size / 2);
+		if (Size == 1) {
+            Vector2 Rad = Pos - Center;
+			if (biome.get(Rad.magnitude, Mathf.Atan2(Rad.y, Rad.x)*Rad.magnitude) > 0) {
+				return new Tuple<PixelState, bool>(new PixelState(0, true), true);
+			} else {
+				return new Tuple<PixelState, bool>(new PixelState(0, true), true);
+			}
+		}
+		//Axises never intersect the current square, so the farest point is one of the angles
+		float maxR = 0, minR = 0;
+		foreach(Vector2 Delta in Data.Main.Shifts01) {
+            maxR = Mathf.Max(maxR, (Center - ((Vector2)Pos - Delta * (Size / 2f))).sqrMagnitude);
+			minR = Mathf.Min(minR, (Center - (Pos - Delta * (Size / 2))).sqrMagnitude);
+		}
+        maxR = Mathf.Sqrt(maxR);
+		minR = Mathf.Sqrt(minR);
+		if (biome.Floor.get(0, minR) < biome.Amplitude) {
+			return new Tuple<PixelState, bool>(new PixelState(0, false), true);
+		}
+		if (biome.Floor.get(0, maxR) > biome.Amplitude) {
+			return new Tuple<PixelState, bool>(new PixelState(0, true), true);
+		}
+		
+		Color = null;
+		Tuple<PixelState, bool>[] Returned = { null, null, null, null };
+		for (int i = 0; i < 4; i++) {
+			Returned[i] = Children[i].TriangleFill(A, B, C, NewColor);
+			if (Returned[i].Item1 != Returned[0].Item1 || Returned[i] == null)
+				Returned[0] = null;
+		}
+		if (Returned[0] != null) {
+			return new Tuple<PixelState, bool>(Returned[0].Item1, true);
+		}
+		for (int i = 0; i < 4; i++) {
+			if (Returned[i].Item2)
+				Children[i].Update(Returned[i].Item1);
+		}
+		return new Tuple<PixelState, bool>(Color, false);
+	}
+	public void InitChildren(PixelState NewColor) {
         if (NewColor == null) {
             Debug.LogError("Color not defined");
             return;
@@ -75,103 +121,105 @@ public class Tree {
         Root.Renderer.Draw(this);
     }
 
-    public PixelState CircleFill(Vector2 Center, float R, PixelState NewColor) {
+    public Tuple<PixelState, bool> CircleFill(Vector2 Center, float R, PixelState NewColor) {
         if (NewColor == null) {
             Debug.LogError("Color not defined");
             return null;
         }
         if (NewColor==Color)
-            return Color;
+            return new Tuple<PixelState, bool>(Color, false);
         if(Size == 1) {
             if(Utils.Distance(Pos+Vector2.one*0.5f, Center) > R) {
-                return Color;
+                return new Tuple<PixelState, bool>(Color, false);
             } else {
-                Update(NewColor);
-                return Color;
+                return new Tuple<PixelState, bool>(NewColor, true);
             }
         }
         if (Utils.Distance(Pos + new Vector2(0, 0), Center) <= R &&
             Utils.Distance(Pos + new Vector2(0, Size), Center) <= R &&
             Utils.Distance(Pos + new Vector2(Size, 0), Center) <= R &&
             Utils.Distance(Pos + new Vector2(Size, Size), Center) <= R) {
-            Update(NewColor);
-            return Color;
-        }
+			return new Tuple<PixelState, bool>(NewColor, true);
+		}
         if (Center.x >= Pos.x && Center.x <= Pos.x + Size) {
             if (Center.y <= Pos.y - R || Center.y >= Pos.y + Size + R) {
-                return Color;
-            }
+				return new Tuple<PixelState, bool>(Color, false);
+			}
         }
         else if (Center.y >= Pos.y && Center.y <= Pos.y + Size) {
             if (Center.x <= Pos.x - R || Center.x >= Pos.x + Size + R) {
-                return Color;
-            }
+				return new Tuple<PixelState, bool>(Color, false);
+			}
         }
         else {
             if (Utils.Distance(Pos + new Vector2(0, 0), Center) > R &&
                 Utils.Distance(Pos + new Vector2(0, Size), Center) > R &&
                 Utils.Distance(Pos + new Vector2(Size, 0), Center) > R &&
                 Utils.Distance(Pos + new Vector2(Size, Size), Center) > R) {
-                return Color;
-            }
+				return new Tuple<PixelState, bool>(Color, false);
+			}
         }
         if(Color!=null)
             InitChildren(Color);
         Color = null;
-        PixelState[] Returned = { null, null, null, null };
+		Tuple<PixelState, bool>[] Returned = { null, null, null, null };
         for (int i = 0; i<4; i++) {
             Returned[i] = Children[i].CircleFill(Center, R, NewColor);
-            if (Returned[i] != Returned[0] || Returned[i] == null)
+            if (Returned[i].Item1 != Returned[0].Item1 || Returned[i] == null)
                 Returned[0] = null;
         }
         if (Returned[0] != null) {
-            //Update(Returned[0]);TODO:FIX and return
-            return Color;
-        }
-        return Color;
-    }
-    public PixelState TriangleFill(Vector2 A, Vector2 B, Vector2 C, PixelState NewColor) {
+			return new Tuple<PixelState, bool>(Returned[0].Item1, true);
+		}
+		for (int i = 0; i < 4; i++) {
+			if (Returned[i].Item2)
+				Children[i].Update(Returned[i].Item1);
+		}
+		return new Tuple<PixelState, bool>(Color, false);
+	}
+    public Tuple<PixelState, bool> TriangleFill(Vector2 A, Vector2 B, Vector2 C, PixelState NewColor) {
         if (NewColor == null) {
             Debug.LogError("Color not defined");
             return null;
         }
         if (NewColor == Color)
-            return Color;
-        if (Size == 1) {
+			return new Tuple<PixelState, bool>(Color, false);
+		if (Size == 1) {
             if (!Utils.PointInTriangle(A, B, C, (Vector2)Pos + Vector2.one * 0.5f)) {
-                return Color;
-            }
+				return new Tuple<PixelState, bool>(Color, false);
+			}
             else {
-                Update(NewColor);
-                return Color;
-            }
+				return new Tuple<PixelState, bool>(NewColor, true);
+			}
         }
         if (Utils.PointInTriangle(A, B, C, Pos + new Vector2(0, 0)) &&
             Utils.PointInTriangle(A, B, C, Pos + new Vector2(Size, 0)) &&
             Utils.PointInTriangle(A, B, C, Pos + new Vector2(0, Size)) &&
             Utils.PointInTriangle(A, B, C, Pos + new Vector2(Size, Size))) {
-            Update(NewColor);
-            return Color;
-        }
+			return new Tuple<PixelState, bool>(NewColor, true);
+		}
         if (!Utils.SegmentCrossesSquare(A, B, Pos, Size) &&
             !Utils.SegmentCrossesSquare(C, B, Pos, Size) &&
             !Utils.SegmentCrossesSquare(A, C, Pos, Size)) {
-            return Color;
-        }
+			return new Tuple<PixelState, bool>(Color, false);
+		}
         if (Color != null)
             InitChildren(Color);
         Color = null;
-        PixelState[] Returned = { null, null, null, null };
+		Tuple<PixelState, bool>[] Returned = { null, null, null, null };
         for (int i = 0; i < 4; i++) {
             Returned[i] = Children[i].TriangleFill(A, B, C, NewColor);
-            if (Returned[i] != Returned[0] || Returned[i] == null)
+            if (Returned[i].Item1 != Returned[0].Item1 || Returned[i] == null)
                 Returned[0] = null;
         }
         if (Returned[0] != null) {
-            //Update(Returned[0]);TODO:FIX and return
-            return Color;
-        }
-        return Color;
-    }
+			return new Tuple<PixelState, bool>(Returned[0].Item1, true);
+		}
+		for (int i = 0; i < 4; i++) {
+            if (Returned[i].Item2)
+				Children[i].Update(Returned[i].Item1);
+		}
+		return new Tuple<PixelState, bool>(Color, false);
+	}
 }
 
