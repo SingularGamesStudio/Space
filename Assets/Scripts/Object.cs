@@ -9,19 +9,17 @@ public class Object : MonoBehaviour {
     public bool DebugMode;
     public ObjectRenderer Renderer;
     Biome biome;
+    public int PlanetRadius = 128;
+    public int seed = 42;
 
     void Start() {
         Root = new Tree(Size, this, new PixelState(0, true));
-        InitPlanet(42);
+        InitPlanet(seed);
         Root.BuildBiome(biome);
-        /*Root.CircleFill(new Vector2(2048, 2048-100), 200, new PixelState(0, false));
-        Root.CircleFill(new Vector2(604, 300), 110, new PixelState(0, false));
-        Root.CircleFill(new Vector2(704, 500), 230, new PixelState(0, true));
-        Root.TriangleFill(new Vector2(100, 510), new Vector2(435, 128), new Vector2(555, 666), new PixelState(0, false));
-        Root.TriangleFill(new Vector2(345, 923), new Vector2(111, 111), new Vector2(654, 0), new PixelState(0, true));*/
     }
     private void Update() {
-        if (Input.GetMouseButtonUp(0)) {
+		Debug.Log(Tree.cnt);
+		if (Input.GetMouseButtonUp(0)) {
             Vector2 Pos = Utils.TransformPos(Camera.main.ScreenToWorldPoint(Input.mousePosition), transform, Size);
             List<EdgePoint> Edge = GetEdge(new Vector2Int((int)Pos.x, (int)Pos.y), 300, 8);
             if (Edge != null) {
@@ -39,6 +37,7 @@ public class Object : MonoBehaviour {
 	{
         biome = new Biome(Data.Main.Biomes[0]);
         biome.Init(seed);
+        biome.Floor.Instance.Shift = new Vector2(0, PlanetRadius);
 	}
 
     public void Transform(List<EdgePoint> Edge, List<Vector2> NewEdge) {

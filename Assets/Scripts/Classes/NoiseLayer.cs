@@ -7,18 +7,20 @@ public class NoiseLayer
 	[System.Serializable]
     public class InitList
 	{
-        public float Frequency = 0;
+        public float Frequency = 1;
         public float Amplitude = 0;
 		public Vector2 Shift;
 	}
     public enum NoiseType {
         Linear,
-        Perlin
+        Perlin,
+		Sign,
+		Arctg
     }
-    public float MinFrequency;
-    public float MaxFrequency;
-    public float MinAmplitude;
-    public float MaxAmplitude;
+    public float MinFrequency = 1;
+    public float MaxFrequency = 1;
+    public float MinAmplitude = 1;
+    public float MaxAmplitude = 1;
 	public Vector2 MinShift;
 	public Vector2 MaxShift;
 	public NoiseType type;
@@ -50,13 +52,17 @@ public class NoiseLayer
 	{
 		float x1 = x - Instance.Shift.x;
 		float y1 = y - Instance.Shift.y;
-		if (type == NoiseType.Linear) {
-			return y1 * Instance.Amplitude;
-		} else if (type == NoiseType.Perlin) {
-			x1 *= Instance.Frequency;
-			y1 *= Instance.Frequency;
-			return Mathf.PerlinNoise((float)x1, (float)y1)*Instance.Amplitude;
+		switch (type) {
+			case NoiseType.Linear:
+				return Instance.Amplitude * (y1);
+			case NoiseType.Perlin:
+				return Instance.Amplitude * (Mathf.PerlinNoise(x1 * Instance.Frequency, y1 * Instance.Frequency)*2f-1f);
+			case NoiseType.Sign:
+				return Instance.Amplitude * Mathf.Sign(y1);
+			case NoiseType.Arctg:
+				return Instance.Amplitude * Mathf.Atan(y1 * Instance.Frequency)/Mathf.PI*2f;
+			default:
+				return 0;
 		}
-		return 0;
 	}
 }
