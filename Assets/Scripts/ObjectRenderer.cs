@@ -11,7 +11,7 @@ public class ObjectRenderer : MonoBehaviour
     public int CellSize;// must be a big enough power of 2, more than VisionRange*2
     public List<RenderArea> Cells = new List<RenderArea>();
 
-
+    public List<Tree> DelayedDraw = new List<Tree>();
     public List<List<List<Matrix4x4>>> Matrices = new List<List<List<Matrix4x4>>>();
     public List<List<List<Vector4>>> ShaderCuts = new List<List<List<Vector4>>>();
     public Queue<int> DrawOrder = new Queue<int>();
@@ -48,22 +48,50 @@ public class ObjectRenderer : MonoBehaviour
             BasicPlane = Data.Main.EmptySprite.GetComponent<MeshFilter>().mesh;
         }
     }
-    private void FixedUpdate() {
-        int cnt = 0;
-        foreach(int id in DrawOrder) {
-            
-            for (int id2 = 0; id2 < ShaderCuts[id].Count; id2++) {
-                cnt += ShaderCuts[id][id2].Count;
-                ToBeRendered[id] = false;
-                MaterialPropertyBlock block = new MaterialPropertyBlock();
-                block.SetVectorArray("_Rect", ShaderCuts[id][id2]);
-                Graphics.DrawMeshInstanced(BasicPlane, 0, Data.Main.Materials[id], Matrices[id][id2], block, UnityEngine.Rendering.ShadowCastingMode.Off, false);
-            }
-            Matrices[id].Clear();
-            ShaderCuts[id].Clear();
+
+    void AddToRenderQueue(Tree Square) {
+        int id = Square.Color.TextureID;
+        if (Square.Color.Active == false)
+            id = 1;
+        if (!ToBeRendered[id]) {
+            ToBeRendered[id] = true;
+            DrawOrder.Enqueue(id);
+            Matrices[id].Add(new List<Matrix4x4>());
+            ShaderCuts[id].Add(new List<Vector4>());
         }
-        DrawOrder.Clear();
-        Debug.Log(cnt);
+        if (ShaderCuts[id][ShaderCuts[id].Count - 1].Count == 1023) {
+            Matrices[id].Add(new List<Matrix4x4>());
+            ShaderCuts[id].Add(new List<Vector4>());
+        }
+        ShaderCuts[id][ShaderCuts[id].Count - 1].Add(new Vector4(Square.Pos.x, Square.Pos.y, Square.Size, Square.Size));
+        Matrix4x4 tf = Matrix4x4.identity;
+        tf.SetTRS((Vector3)Utils.InverseTransformPos(Square.Pos + new Vector2(Square.Size / 2f, Square.Size / 2f), Parent.transform, Parent.Size) + new Vector3(100, 100, 100), Quaternion.Euler(90f, 90f, -90f), new Vector3(Square.Size / 1000f, Square.Size / 1000f, Square.Size / 1000f));
+        Matrices[id][Matrices[id].Count - 1].Add(tf);
+    }
+    
+    private void FixedUpdate() {
+        foreach(Tree Square in DelayedDraw) {
+            if (!Square.rendered) {
+                Square.rendered = true;
+                foreach (RenderArea Cell in Cells) {
+                    Tuple<Vector2, Vector2> Box = Utils.SquaresIntersect(Square.Pos, Square.Size, Cell.Pos, Cell.Size);
+                    if (Box == null) continue;
+                    if (Square.Color != null) {
+                        AddToRenderQueue(Square);
+                        break;
+                    }
+                    else break;
+                }
+            }
+        }
+        foreach (Tree Square in DelayedDraw) {
+            Square.rendered = false;
+        }
+        DelayedDraw.Clear();
+        Render();
+        
+        
+        //update viewed area
         List<RenderArea> added = new List<RenderArea>();
         foreach (GameObject g in Tracking) {
             for (int dx = -VisionRange; dx < VisionRange + CellSize; dx += CellSize) {
@@ -78,7 +106,7 @@ public class ObjectRenderer : MonoBehaviour
                         }
                     }
                     if (!ok) {
-                        Vector2Int ToSpawn = new Vector2Int(((int)Point.x / CellSize) * CellSize, ((int)Point.y / CellSize) * CellSize);
+                        Vector2Int ToSpawn = new Vector2Int((int)Mathf.Floor(Point.x / CellSize) * CellSize, (int)Mathf.Floor(Point.y / CellSize) * CellSize);
                         Cells.Add(new RenderArea(ToSpawn, CellSize, this));
                         added.Add(Cells[Cells.Count - 1]);
                     }
@@ -86,9 +114,24 @@ public class ObjectRenderer : MonoBehaviour
             }
         }
         if (added.Count>0) {
-            Draw(Parent.Root, added);
+            DrawRecursive(Parent.Root, added);
         }
     }
+    
+    void Render() {
+        foreach (int id in DrawOrder) {
+            for (int id2 = 0; id2 < ShaderCuts[id].Count; id2++) {
+                ToBeRendered[id] = false;
+                MaterialPropertyBlock block = new MaterialPropertyBlock();
+                block.SetVectorArray("_Rect", ShaderCuts[id][id2]);
+                Graphics.DrawMeshInstanced(BasicPlane, 0, Data.Main.Materials[id], Matrices[id][id2], block, UnityEngine.Rendering.ShadowCastingMode.Off, false);
+            }
+            Matrices[id].Clear();
+            ShaderCuts[id].Clear();
+        }
+        DrawOrder.Clear();
+    }
+    
     Tree LastRes = null;
     public PixelState GetPixel(int x, int y) {
         
@@ -104,36 +147,32 @@ public class ObjectRenderer : MonoBehaviour
     public PixelState GetPixel(Vector2Int Pos) {
         return Parent.Root.Locate(Pos).Color;
     }
+    /// <summary>
+    /// Draws a node of a tree (if the node is not a leaf, does nothing)
+    /// Delayed until start of the next frame
+    /// </summary>
+    /// <param name="Square"></param>
+    /// <param name="areas"></param>
     public void Draw(Tree Square) {
-        Draw(Square, Cells);
+        DelayedDraw.Add(Square);
     }
-    public void Draw(Tree Square, List<RenderArea> areas) {
+    /// <summary>
+    /// Draws a node of a tree (and children if the node is not filled)
+    /// Draws Instantly, could affect performance
+    /// </summary>
+    /// <param name="Square"></param>
+    /// <param name="areas"></param>
+    public void DrawRecursive(Tree Square, List<RenderArea> areas) {
         foreach (RenderArea Cell in areas) {
             Tuple<Vector2, Vector2> Box = Utils.SquaresIntersect(Square.Pos, Square.Size, Cell.Pos, Cell.Size);
             if (Box == null) continue;
             if (Square.Color != null) {
-                int id = Square.Color.TextureID;
-                if (Square.Color.Active == false)
-                    id = 1;
-                if (!ToBeRendered[id]) {
-                    ToBeRendered[id] = true;
-                    DrawOrder.Enqueue(id);
-                    Matrices[id].Add(new List<Matrix4x4>());
-                    ShaderCuts[id].Add(new List<Vector4>());
-                }
-                if (ShaderCuts[id][ShaderCuts[id].Count - 1].Count == 1023) {
-                    Matrices[id].Add(new List<Matrix4x4>());
-                    ShaderCuts[id].Add(new List<Vector4>());
-                }
-                ShaderCuts[id][ShaderCuts[id].Count - 1].Add(new Vector4(Square.Pos.x, Square.Pos.y, Square.Size, Square.Size));
-                Matrix4x4 tf = Matrix4x4.identity;
-                tf.SetTRS((Vector3)Utils.InverseTransformPos(Square.Pos + new Vector2(Square.Size / 2f, Square.Size / 2f), Parent.transform, Parent.Size) + new Vector3(100, 100, 100), Quaternion.Euler(90f, 90f, -90f), new Vector3(Square.Size / 1000f, Square.Size / 1000f, Square.Size / 1000f));
-                Matrices[id][Matrices[id].Count - 1].Add(tf);
+                AddToRenderQueue(Square);
                 return;
             }
             else {
                 foreach (Tree Child in Square.Children) {
-                    Draw(Child, areas);
+                    DrawRecursive(Child, areas);
                 }
                 return;
             }

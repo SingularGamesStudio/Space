@@ -15,7 +15,7 @@ public static class Curves
     public static List<Vector2> Shift(List<EdgePoint> Base, List<float> Curve, int Interpolate = 0) {
         int Accuracy = Curve.Count;
         if(Accuracy<2 || Accuracy > Base.Count) {
-            Debug.LogError("Curve size out of bounds");
+            Debug.LogError("Curve size out of bounds: " + Base.Count);
             return null;
         }
         Vector2 Dir = new Vector2Int(0, 0);

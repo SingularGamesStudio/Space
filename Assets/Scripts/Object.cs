@@ -8,15 +8,17 @@ public class Object : MonoBehaviour {
     public int Size = 256;
     public bool DebugMode;
     public ObjectRenderer Renderer;
-    public Biome biome;
-    
+    Biome biome;
+
     void Start() {
         Root = new Tree(Size, this, new PixelState(0, true));
-        Root.CircleFill(new Vector2(2048, 2048-100), 200, new PixelState(0, false));
+        InitPlanet(42);
+        Root.BuildBiome(biome);
+        /*Root.CircleFill(new Vector2(2048, 2048-100), 200, new PixelState(0, false));
         Root.CircleFill(new Vector2(604, 300), 110, new PixelState(0, false));
         Root.CircleFill(new Vector2(704, 500), 230, new PixelState(0, true));
         Root.TriangleFill(new Vector2(100, 510), new Vector2(435, 128), new Vector2(555, 666), new PixelState(0, false));
-        Root.TriangleFill(new Vector2(345, 923), new Vector2(111, 111), new Vector2(654, 0), new PixelState(0, true));
+        Root.TriangleFill(new Vector2(345, 923), new Vector2(111, 111), new Vector2(654, 0), new PixelState(0, true));*/
     }
     private void Update() {
         if (Input.GetMouseButtonUp(0)) {

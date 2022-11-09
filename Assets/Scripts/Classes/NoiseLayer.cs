@@ -38,17 +38,20 @@ public class NoiseLayer
 		MaxFrequency = toCopy.MaxFrequency;
 		MinAmplitude = toCopy.MinAmplitude;
 		MaxAmplitude = toCopy.MaxAmplitude;
-		type = toCopy.type;
+        MinShift = toCopy.MinShift;
+        MaxShift = toCopy.MaxShift;
+        type = toCopy.type;
 		Instance = new InitList();
 		Instance.Frequency = toCopy.Instance.Frequency;
 		Instance.Amplitude = toCopy.Instance.Amplitude;
-	}
+        Instance.Shift = toCopy.Instance.Shift;
+    }
 	public float get(float x, float y)
 	{
 		float x1 = x - Instance.Shift.x;
 		float y1 = y - Instance.Shift.y;
 		if (type == NoiseType.Linear) {
-			return y * Instance.Amplitude;
+			return y1 * Instance.Amplitude;
 		} else if (type == NoiseType.Perlin) {
 			x1 *= Instance.Frequency;
 			y1 *= Instance.Frequency;
