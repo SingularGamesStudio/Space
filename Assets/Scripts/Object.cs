@@ -53,7 +53,7 @@ public class Object : MonoBehaviour {
             else biome.Init(rnd.Next(100000), rnd.Next(biome.MinSize, Mathf.Min(Length-Data.Main.MinBiomeSize, biome.MaxSize)), PlanetRadius);
             biome.LeftEdge = iter;
             Biomes.Add(biome);
-            Debug.Log(biome.Size + " " + biome.Floor.Instance.Shift);
+            //Debug.Log(biome.Size + " " + biome.Floor.Instance.Shift);
             Length -= biome.Size;
             for (int i = iter; i < iter + biome.Size; i++) {
                 BiomeByPos[i] = Biomes.Count - 1;

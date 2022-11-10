@@ -169,109 +169,91 @@ MonoBehaviour:
   Biomes:
   - name: Biome_1
     Floor:
-      MinFrequency: 0
-      MaxFrequency: 0
-      MinAmplitude: -1
-      MaxAmplitude: -1
-      MinShift: {x: 0, y: -100}
-      MaxShift: {x: 0, y: 100}
-      type: 0
-      Instance:
-        Frequency: 0
-        Amplitude: 0
-        Shift: {x: 0, y: 0}
+      Noises:
+      - MinFrequency: 0
+        MaxFrequency: 0
+        MinAmplitude: -100
+        MaxAmplitude: -100
+        MinShift: {x: 0, y: 0}
+        MaxShift: {x: 0, y: 0}
+        type: 2
+        Instance:
+          Frequency: 0
+          Amplitude: 0
+          Shift: {x: 0, y: 0}
     MinSize: 300
     MaxSize: 600
     Size: 0
     LeftEdge: 0
     Base:
-    - MinFrequency: 0.01
-      MaxFrequency: 0.01
-      MinAmplitude: 200
-      MaxAmplitude: 200
-      MinShift: {x: 0, y: 0}
-      MaxShift: {x: 100, y: 100}
-      type: 1
-      Instance:
-        Frequency: 0
-        Amplitude: 0
-        Shift: {x: 0, y: 0}
-    - MinFrequency: 0.02
-      MaxFrequency: 0.02
-      MinAmplitude: 50
-      MaxAmplitude: 50
-      MinShift: {x: 0, y: 0}
-      MaxShift: {x: 100, y: 100}
-      type: 1
-      Instance:
-        Frequency: 0
-        Amplitude: 0
-        Shift: {x: 0, y: 0}
-    - MinFrequency: 0.04
-      MaxFrequency: 0.04
-      MinAmplitude: 25
-      MaxAmplitude: 25
-      MinShift: {x: 0, y: 0}
-      MaxShift: {x: 100, y: 100}
-      type: 1
-      Instance:
-        Frequency: 0
-        Amplitude: 0
-        Shift: {x: 0, y: 0}
-    - MinFrequency: 0.08
-      MaxFrequency: 0.08
-      MinAmplitude: 10
-      MaxAmplitude: 10
-      MinShift: {x: 0, y: 0}
-      MaxShift: {x: 100, y: 100}
-      type: 1
-      Instance:
-        Frequency: 0
-        Amplitude: 0
-        Shift: {x: 0, y: 0}
-    - MinFrequency: 1
-      MaxFrequency: 1
-      MinAmplitude: -50
-      MaxAmplitude: -50
-      MinShift: {x: 0, y: 300}
-      MaxShift: {x: 0, y: 300}
-      type: 3
-      Instance:
-        Frequency: 0
-        Amplitude: 0
-        Shift: {x: 0, y: 0}
+    - Noises:
+      - MinFrequency: 0.001
+        MaxFrequency: 0.001
+        MinAmplitude: 10
+        MaxAmplitude: 10
+        MinShift: {x: 0, y: 0}
+        MaxShift: {x: 100, y: 100}
+        type: 1
+        Instance:
+          Frequency: 0
+          Amplitude: 0
+          Shift: {x: 0, y: 0}
+      - MinFrequency: 0.002
+        MaxFrequency: 0.002
+        MinAmplitude: 10
+        MaxAmplitude: 10
+        MinShift: {x: 0, y: 0}
+        MaxShift: {x: 100, y: 100}
+        type: 1
+        Instance:
+          Frequency: 0
+          Amplitude: 0
+          Shift: {x: 0, y: 0}
+      - MinFrequency: 0.004
+        MaxFrequency: 0.004
+        MinAmplitude: 10
+        MaxAmplitude: 10
+        MinShift: {x: 0, y: 0}
+        MaxShift: {x: 100, y: 100}
+        type: 1
+        Instance:
+          Frequency: 0
+          Amplitude: 0
+          Shift: {x: 0, y: 0}
+      - MinFrequency: 0.008
+        MaxFrequency: 0.008
+        MinAmplitude: 10
+        MaxAmplitude: 10
+        MinShift: {x: 0, y: 0}
+        MaxShift: {x: 100, y: 100}
+        type: 1
+        Instance:
+          Frequency: 0
+          Amplitude: 0
+          Shift: {x: 0, y: 0}
+      - MinFrequency: 0.016
+        MaxFrequency: 0.016
+        MinAmplitude: 10
+        MaxAmplitude: 10
+        MinShift: {x: 0, y: 0}
+        MaxShift: {x: 100, y: 100}
+        type: 1
+        Instance:
+          Frequency: 0
+          Amplitude: 0
+          Shift: {x: 0, y: 0}
+      - MinFrequency: 0.032
+        MaxFrequency: 0.032
+        MinAmplitude: 10
+        MaxAmplitude: 10
+        MinShift: {x: 0, y: 0}
+        MaxShift: {x: 100, y: 100}
+        type: 1
+        Instance:
+          Frequency: 0
+          Amplitude: 0
+          Shift: {x: 0, y: 0}
     Amplitude: 0
-  - name: Biome_2
-    Floor:
-      MinFrequency: 0
-      MaxFrequency: 0
-      MinAmplitude: -1
-      MaxAmplitude: -1
-      MinShift: {x: 0, y: -100}
-      MaxShift: {x: 0, y: 100}
-      type: 0
-      Instance:
-        Frequency: 0
-        Amplitude: 0
-        Shift: {x: 0, y: 0}
-    MinSize: 300
-    MaxSize: 600
-    Size: 0
-    LeftEdge: 0
-    Base:
-    - MinFrequency: 0.005
-      MaxFrequency: 0.005
-      MinAmplitude: 300
-      MaxAmplitude: 300
-      MinShift: {x: 0, y: 0}
-      MaxShift: {x: 100, y: 100}
-      type: 1
-      Instance:
-        Frequency: 0
-        Amplitude: 0
-        Shift: {x: 0, y: 0}
-    Amplitude: 0
-  FloorNoises: 
   Materials:
   - {fileID: 2100000, guid: 5b59006ef939a9447844738cd0e4e862, type: 2}
   - {fileID: 2100000, guid: bc6dc0192ed3d69459c4b81601b3c3a3, type: 2}
@@ -727,8 +709,8 @@ MonoBehaviour:
   Renderer: {fileID: 2106544243}
   Biomes: []
   BiomeByPos: 
-  PlanetRadius: 500
-  seed: 1337
+  PlanetRadius: 700
+  seed: 0
 --- !u!212 &2106544241
 SpriteRenderer:
   m_ObjectHideFlags: 0

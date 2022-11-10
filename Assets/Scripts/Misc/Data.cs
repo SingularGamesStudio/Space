@@ -8,7 +8,6 @@ public class Data : MonoBehaviour
     public int MaxSpriteSize;
     public List<Texture2D> Textures;
     public List<Biome> Biomes;
-    public List<NoiseLayer.NoiseType> FloorNoises;
     public List<Material> Materials;
     public GameObject ObjectRenderer;
     public GameObject CameraRenderer;

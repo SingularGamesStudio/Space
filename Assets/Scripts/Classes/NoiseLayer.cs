@@ -4,26 +4,29 @@ using UnityEngine;
 [System.Serializable]
 public class NoiseLayer
 {
-	[System.Serializable]
+    
+    public enum NoiseType {
+        COORD,
+        Linear,
+        Perlin,
+        Sign,
+        Arctg
+    }
+    [System.Serializable]
     public class InitList
 	{
         public float Frequency = 1;
         public float Amplitude = 0;
 		public Vector2 Shift;
 	}
-    public enum NoiseType {
-        Linear,
-        Perlin,
-		Sign,
-		Arctg
-    }
+    
     public float MinFrequency = 1;
     public float MaxFrequency = 1;
     public float MinAmplitude = 1;
     public float MaxAmplitude = 1;
 	public Vector2 MinShift;
 	public Vector2 MaxShift;
-	public NoiseType type;
+    public NoiseType type;
     [HideInInspector]
     public InitList Instance;
 	public void Init(int seed)
