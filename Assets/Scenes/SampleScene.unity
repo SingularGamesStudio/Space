@@ -173,18 +173,22 @@ MonoBehaviour:
       MaxFrequency: 0
       MinAmplitude: -1
       MaxAmplitude: -1
-      MinShift: {x: 0, y: 0}
-      MaxShift: {x: 0, y: 0}
+      MinShift: {x: 0, y: -100}
+      MaxShift: {x: 0, y: 100}
       type: 0
       Instance:
         Frequency: 0
         Amplitude: 0
         Shift: {x: 0, y: 0}
+    MinSize: 300
+    MaxSize: 600
+    Size: 0
+    LeftEdge: 0
     Base:
     - MinFrequency: 0.01
       MaxFrequency: 0.01
-      MinAmplitude: 300
-      MaxAmplitude: 300
+      MinAmplitude: 200
+      MaxAmplitude: 200
       MinShift: {x: 0, y: 0}
       MaxShift: {x: 100, y: 100}
       type: 1
@@ -237,6 +241,36 @@ MonoBehaviour:
         Amplitude: 0
         Shift: {x: 0, y: 0}
     Amplitude: 0
+  - name: Biome_2
+    Floor:
+      MinFrequency: 0
+      MaxFrequency: 0
+      MinAmplitude: -1
+      MaxAmplitude: -1
+      MinShift: {x: 0, y: -100}
+      MaxShift: {x: 0, y: 100}
+      type: 0
+      Instance:
+        Frequency: 0
+        Amplitude: 0
+        Shift: {x: 0, y: 0}
+    MinSize: 300
+    MaxSize: 600
+    Size: 0
+    LeftEdge: 0
+    Base:
+    - MinFrequency: 0.005
+      MaxFrequency: 0.005
+      MinAmplitude: 300
+      MaxAmplitude: 300
+      MinShift: {x: 0, y: 0}
+      MaxShift: {x: 100, y: 100}
+      type: 1
+      Instance:
+        Frequency: 0
+        Amplitude: 0
+        Shift: {x: 0, y: 0}
+    Amplitude: 0
   FloorNoises: 
   Materials:
   - {fileID: 2100000, guid: 5b59006ef939a9447844738cd0e4e862, type: 2}
@@ -244,6 +278,7 @@ MonoBehaviour:
   ObjectRenderer: {fileID: 7539793936208114131, guid: c5a0d8c0ec9e6b24baa53fe638421eec, type: 3}
   CameraRenderer: {fileID: 910146596427575832, guid: e982b11be8411ac4084c056b684fd1a1, type: 3}
   EmptySprite: {fileID: 1767517546}
+  MinBiomeSize: 100000
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -687,11 +722,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d3240dc3c096964b84b17256836e0b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Size: 4096
+  Size: 2048
   DebugMode: 1
   Renderer: {fileID: 2106544243}
-  PlanetRadius: 1500
-  seed: 228
+  Biomes: []
+  BiomeByPos: 
+  PlanetRadius: 500
+  seed: 1337
 --- !u!212 &2106544241
 SpriteRenderer:
   m_ObjectHideFlags: 0

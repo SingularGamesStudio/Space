@@ -54,7 +54,7 @@ public class Tree {
             Vector2 Center = new Vector2(Root.Size / 2, Root.Size / 2);
 		    if (Size == 1) {
                 Vector2 Rad = Pos - Center;
-			    if (biome.get((Mathf.Atan2(Rad.y, Rad.x)+Mathf.PI)*Root.PlanetRadius, Rad.magnitude) > 0) {
+			    if (Root.GetSmoothBiomeValue((Mathf.Atan2(Rad.y, Rad.x)+Mathf.PI)*Root.PlanetRadius, Rad.magnitude) > 0) {
 				    return  (new PixelState(0, true), true);
 			    } else {
                     return  (new PixelState(0, false), true);
@@ -73,7 +73,9 @@ public class Tree {
                 return  (new PixelState(0, false), true);
             }
             if (biome.Floor.get(0, maxR)-biome.Amplitude > 0) {
-                return  (new PixelState(0, true), true);
+                //Debug.Log("fill " + maxR + " " + minR);
+
+				return  (new PixelState(0, true), true);
             }
         }
         if (Color != null)

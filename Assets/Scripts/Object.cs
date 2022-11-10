@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.XR;
+using System.Linq;
 
 public class Object : MonoBehaviour {
     public Tree Root;
@@ -17,10 +18,10 @@ public class Object : MonoBehaviour {
     void Start() {
         Root = new Tree(Size, this, new PixelState(0, true));
         InitPlanet(seed);
-        //Root.BuildBiome(biome);
+        Root.BuildBiome();
     }
     private void Update() {
-		Debug.Log(Tree.cnt);
+		//Debug.Log(Tree.cnt);
 		if (Input.GetMouseButtonUp(0)) {
             Vector2 Pos = Utils.TransformPos(Camera.main.ScreenToWorldPoint(Input.mousePosition), transform, Size);
             List<EdgePoint> Edge = GetEdge(new Vector2Int((int)Pos.x, (int)Pos.y), 300, 8);
@@ -39,18 +40,20 @@ public class Object : MonoBehaviour {
 	{
         System.Random rnd = new System.Random(seed);
         int Length = (int)(PlanetRadius * Mathf.PI * 2f);
-        BiomeByPos = new int[Length+10];
+        BiomeByPos = new int[Length+1];
         int iter = 0;
         while (Length > 0) {
             int id = rnd.Next(Data.Main.Biomes.Count);
             while (Data.Main.Biomes[id].MinSize > Length) {
                 id = rnd.Next(Data.Main.Biomes.Count);
             }
-            Biome biome = new Biome(Data.Main.Biomes[0]);
-            if (Data.Main.MinBiomeSize + biome.MinSize < Length)
-                biome.Init(seed, Length, PlanetRadius);
-            else biome.Init(seed, rnd.Next(biome.MinSize, Mathf.Min(Length, biome.MaxSize)), PlanetRadius);
+            Biome biome = new Biome(Data.Main.Biomes[id]);
+            if (Data.Main.MinBiomeSize + biome.MinSize > Length)
+                biome.Init(rnd.Next(100000), Length, PlanetRadius);
+            else biome.Init(rnd.Next(100000), rnd.Next(biome.MinSize, Mathf.Min(Length-Data.Main.MinBiomeSize, biome.MaxSize)), PlanetRadius);
+            biome.LeftEdge = iter;
             Biomes.Add(biome);
+            Debug.Log(biome.Size + " " + biome.Floor.Instance.Shift);
             Length -= biome.Size;
             for (int i = iter; i < iter + biome.Size; i++) {
                 BiomeByPos[i] = Biomes.Count - 1;
@@ -58,11 +61,31 @@ public class Object : MonoBehaviour {
             iter += biome.Size;
             
         }
-        for (int i = Length; i < Length+10; i++) {
-            BiomeByPos[i] = Biomes.Count-1;
-        }
+        BiomeByPos[Length] = Biomes.Count-1;
     }
-
+    public float GetSmoothBiomeValue(float x, float y)
+    {
+        int biomeID = BiomeByPos[(int)x];
+        int delta = ((int)(x + Biomes[biomeID].Size / 10f)) % BiomeByPos.Length;
+		if (BiomeByPos[delta] != biomeID) {
+            //Right edge of biome
+            int biome2ID = BiomeByPos[delta];
+            float prop = 0.5f+0.5f*(10f*(Biomes[biomeID].LeftEdge + Biomes[biomeID].Size - x)) / Biomes[biomeID].Size;
+            return Mathf.Clamp(prop * Biomes[biomeID].get(x, y) + (1f - prop) * Biomes[biome2ID].get(delta - Biomes[biomeID].Size / 10f, y), 
+                Biomes[biomeID].Floor.get(x, y)- Biomes[biomeID].Amplitude,
+				Biomes[biomeID].Floor.get(x, y) + Biomes[biomeID].Amplitude);
+		}
+		delta = ((int)(x - Biomes[biomeID].Size / 10f)+ BiomeByPos.Length) % BiomeByPos.Length;
+		if (BiomeByPos[delta] != biomeID) {
+			//Left edge of biome
+			int biome2ID = BiomeByPos[delta];
+			float prop = 0.5f + 0.5f * (10f * (x - Biomes[biomeID].LeftEdge)) / Biomes[biomeID].Size;
+			return Mathf.Clamp(prop * Biomes[biomeID].get(x, y) + (1f - prop) * Biomes[biome2ID].get(delta+ Biomes[biomeID].Size / 10f, y),
+				Biomes[biomeID].Floor.get(x, y) - Biomes[biomeID].Amplitude,
+				Biomes[biomeID].Floor.get(x, y) + Biomes[biomeID].Amplitude);
+		}
+        return Biomes[biomeID].get(x, y);
+	}
     public void Transform(List<EdgePoint> Edge, List<Vector2> NewEdge) {
         float Delta = ((float)Edge.Count) / (NewEdge.Count - 1);
         int Last = 0;

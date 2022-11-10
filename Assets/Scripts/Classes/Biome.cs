@@ -9,7 +9,10 @@ public class Biome
 	public NoiseLayer Floor;
 	public int MinSize;
     public int MaxSize;
+	[HideInInspector]
 	public int Size;
+	[HideInInspector]
+	public int LeftEdge;
     public List<NoiseLayer> Base;
 	public float Amplitude = 0;
 	public Biome(Biome toCopy)
