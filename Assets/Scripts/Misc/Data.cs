@@ -13,9 +13,14 @@ public class Data : MonoBehaviour
     public GameObject ObjectRenderer;
     public GameObject CameraRenderer;
     public GameObject EmptySprite;
+    public int MinBiomeSize = 100000;
     public readonly Vector2Int[] Shifts01 = { new Vector2Int(1, 0), new Vector2Int(0, 0), new Vector2Int(0, 1), new Vector2Int(1, 1) };
     public readonly Vector2Int[] ShiftsLR = { new Vector2Int(1, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) };
     private void Awake() {
         Main = this;
+        foreach (Biome biome in Biomes) {
+            MinBiomeSize = Mathf.Min(MinBiomeSize, biome.MinSize);
+        }
+
     }
 }

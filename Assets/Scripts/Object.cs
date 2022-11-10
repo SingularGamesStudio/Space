@@ -2,20 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.XR;
 
 public class Object : MonoBehaviour {
     public Tree Root;
     public int Size = 256;
     public bool DebugMode;
     public ObjectRenderer Renderer;
-    Biome biome;
+    public List<Biome> Biomes;
+    public int[] BiomeByPos;
     public int PlanetRadius = 128;
     public int seed = 42;
 
     void Start() {
         Root = new Tree(Size, this, new PixelState(0, true));
         InitPlanet(seed);
-        Root.BuildBiome(biome);
+        //Root.BuildBiome(biome);
     }
     private void Update() {
 		Debug.Log(Tree.cnt);
@@ -35,10 +37,31 @@ public class Object : MonoBehaviour {
 
     public void InitPlanet(int seed)
 	{
-        biome = new Biome(Data.Main.Biomes[0]);
-        biome.Init(seed);
-        biome.Floor.Instance.Shift = new Vector2(0, PlanetRadius);
-	}
+        System.Random rnd = new System.Random(seed);
+        int Length = (int)(PlanetRadius * Mathf.PI * 2f);
+        BiomeByPos = new int[Length+10];
+        int iter = 0;
+        while (Length > 0) {
+            int id = rnd.Next(Data.Main.Biomes.Count);
+            while (Data.Main.Biomes[id].MinSize > Length) {
+                id = rnd.Next(Data.Main.Biomes.Count);
+            }
+            Biome biome = new Biome(Data.Main.Biomes[0]);
+            if (Data.Main.MinBiomeSize + biome.MinSize < Length)
+                biome.Init(seed, Length, PlanetRadius);
+            else biome.Init(seed, rnd.Next(biome.MinSize, Mathf.Min(Length, biome.MaxSize)), PlanetRadius);
+            Biomes.Add(biome);
+            Length -= biome.Size;
+            for (int i = iter; i < iter + biome.Size; i++) {
+                BiomeByPos[i] = Biomes.Count - 1;
+            }
+            iter += biome.Size;
+            
+        }
+        for (int i = Length; i < Length+10; i++) {
+            BiomeByPos[i] = Biomes.Count-1;
+        }
+    }
 
     public void Transform(List<EdgePoint> Edge, List<Vector2> NewEdge) {
         float Delta = ((float)Edge.Count) / (NewEdge.Count - 1);

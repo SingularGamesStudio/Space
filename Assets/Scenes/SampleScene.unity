@@ -183,8 +183,8 @@ MonoBehaviour:
     Base:
     - MinFrequency: 0.01
       MaxFrequency: 0.01
-      MinAmplitude: 2000
-      MaxAmplitude: 2000
+      MinAmplitude: 300
+      MaxAmplitude: 300
       MinShift: {x: 0, y: 0}
       MaxShift: {x: 100, y: 100}
       type: 1
@@ -687,10 +687,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d3240dc3c096964b84b17256836e0b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Size: 16384
+  Size: 4096
   DebugMode: 1
   Renderer: {fileID: 2106544243}
-  PlanetRadius: 14000
+  PlanetRadius: 1500
   seed: 228
 --- !u!212 &2106544241
 SpriteRenderer:
@@ -773,6 +773,6 @@ MonoBehaviour:
   Parent: {fileID: 2106544240}
   Tracking:
   - {fileID: 519420028}
-  VisionRange: 1
-  CellSize: 1
+  VisionRange: 2000
+  CellSize: 1024
   ToBeRendered: 

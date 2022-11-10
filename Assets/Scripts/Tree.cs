@@ -30,22 +30,30 @@ public class Tree {
         this.Size = Size;
         this.Root = Root;
         this.Color = Color;
-        cnt++;
     }
-    ~Tree()
+    public ValueTuple<PixelState, bool> BuildBiome(Biome biome = null)
     {
-        cnt--;
-    }
-    public ValueTuple<PixelState, bool> BuildBiome(Biome biome)
-    {
-        if (biome.Floor.type != NoiseLayer.NoiseType.Linear) {
-            throw new FormatException("Biome floor must be a Linear function");
+        if (biome == null) {
+            Vector2 Rad = Pos - new Vector2(Root.Size / 2, Root.Size / 2);
+            if (Size == 1) {
+                biome = Root.Biomes[Root.BiomeByPos[(int)((Mathf.Atan2(Rad.y, Rad.x) + Mathf.PI) * Root.PlanetRadius)]];
+            }
+            else {
+                int[] biomes = { -1, -1, -1, -1 };
+                bool ok1 = true;
+                for(int i = 0; i<4; i++) {
+                    Vector2 Rad1 = Rad + Data.Main.Shifts01[i] * Size;
+                    biomes[i] = Root.BiomeByPos[(int)((Mathf.Atan2(Rad1.y, Rad1.x) + Mathf.PI) * Root.PlanetRadius)];
+                    ok1 = (ok1 && (biomes[i] == biomes[0]));
+                }
+                if (ok1)
+                    biome = Root.Biomes[biomes[0]];
+            }
         }
-        if (Parent != null) {
+        if (biome!=null && Parent != null) {
             Vector2 Center = new Vector2(Root.Size / 2, Root.Size / 2);
 		    if (Size == 1) {
                 Vector2 Rad = Pos - Center;
-                //Debug.Log(Rad.magnitude);
 			    if (biome.get((Mathf.Atan2(Rad.y, Rad.x)+Mathf.PI)*Root.PlanetRadius, Rad.magnitude) > 0) {
 				    return  (new PixelState(0, true), true);
 			    } else {
@@ -58,20 +66,15 @@ public class Tree {
             foreach (Vector2 Delta in Data.Main.Shifts01) {
                 maxR = Mathf.Max(maxR, (Center - ((Vector2)Pos + Delta * Size)).sqrMagnitude);
                 minR = Mathf.Min(minR, (Center - ((Vector2)Pos + Delta * Size)).sqrMagnitude);
-                //Debug.Log(minR);
             }
             maxR = Mathf.Sqrt(maxR);
             minR = Mathf.Sqrt(minR);
-            //Debug.Log(maxR + " " + minR);
             if (biome.Floor.get(0, minR)+biome.Amplitude < 0) {
-                //Debug.Log("del " + Pos+" "+ Size + "r: " + minR + " - " + maxR);
                 return  (new PixelState(0, false), true);
             }
             if (biome.Floor.get(0, maxR)-biome.Amplitude > 0) {
-                //Debug.Log("fill "+ Pos+" "+minR+" "+maxR);
                 return  (new PixelState(0, true), true);
             }
-            //Debug.Log(minR+ " "+ maxR + " " + biome.Floor.get(0, minR));
         }
         if (Color != null)
             InitChildren(Color);

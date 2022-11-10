@@ -48,6 +48,11 @@ public class NoiseLayer
 		Instance.Amplitude = toCopy.Instance.Amplitude;
         Instance.Shift = toCopy.Instance.Shift;
     }
+    public void Shift(int PlanetRadius) {
+		MinShift += new Vector2(0, PlanetRadius);
+        MaxShift += new Vector2(0, PlanetRadius);
+        Instance.Shift += new Vector2(0, PlanetRadius);
+    }
 	public float get(float x, float y)
 	{
 		float x1 = x - Instance.Shift.x;
