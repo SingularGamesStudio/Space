@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [CustomPropertyDrawer(typeof(Func))]
 public class FuncPropertyDrawer : PropertyDrawer
@@ -12,39 +13,50 @@ public class FuncPropertyDrawer : PropertyDrawer
         Linear,
         Sum,
     }
-    FuncType oldtype = FuncType.Null;
-    FuncType type = FuncType.Null;
+    
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
-		object Inst = GetPropertyInstance(property);
-		if (Inst != null) {
+        FuncType oldtype;
+        FuncType type;
+        Func Inst = (Func)GetPropertyInstance(property);
+        Rect ArrowPosition = new Rect(position.min.x, position.min.y+3, EditorGUIUtility.labelWidth, 15);
+        if (Inst != null) {
 			oldtype = (FuncType)Enum.Parse(typeof(FuncType), Inst.GetType().ToString());
-			property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
+            property.isExpanded = EditorGUI.Foldout(ArrowPosition, property.isExpanded, label, true);
 		} else {
 			oldtype = FuncType.Null;
-			property.isExpanded = false;
+            EditorGUI.LabelField(ArrowPosition, label);
+            property.isExpanded = false;
 		}
-		position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
-        type = (FuncType)EditorGUI.EnumPopup(position, oldtype);
+		Rect MenuPosition = new Rect(position.min.x + EditorGUIUtility.labelWidth, position.min.y, position.width-EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight);
+        type = (FuncType)EditorGUI.EnumPopup(MenuPosition, oldtype);
         if (type != oldtype) {
             if (type == FuncType.Null) {
                 property.managedReferenceValue = null;
             }
             else {
-                System.Type t = System.Type.GetType(type.ToString());
-                property.managedReferenceValue = System.Activator.CreateInstance(t);
+                Type t = Type.GetType(type.ToString());
+                property.managedReferenceValue = Activator.CreateInstance(t);
             }
         }
-		if(Inst!=null)
-		((Func)Inst).PropertySize = EditorGUIUtility.singleLineHeight;
 		if (property.isExpanded) {
-			EditorGUI.indentLevel++;
-			Rect pos1 = position;
-			pos1.y += EditorGUIUtility.singleLineHeight;
-			EditorGUI.PropertyField(pos1, property, label, true);
-			((Func)Inst).PropertySize +=base.GetPropertyHeight(property, label);
-			EditorGUI.indentLevel--;
+            
+			EditorGUI.PropertyField(position, property, true);
+            /*if (Inst.argCnt > 0) {
+                EditorGUI.indentLevel++;
+                SerializedProperty arg1 = property.FindPropertyRelative("arg1");
+                Debug.Log(arg1.type+" "+property.type);
+                Rect Arg1Position = new Rect(position.min.x, position.min.y + EditorGUI.GetPropertyHeight(property), position.width, EditorGUI.GetPropertyHeight(arg1));
+                EditorGUI.PropertyField(Arg1Position, arg1, true);
+                if (Inst.argCnt > 1) {
+                    SerializedProperty arg2 = property.FindPropertyRelative("arg2");
+                    Rect Arg2Position = new Rect(position.min.x, position.min.y + EditorGUI.GetPropertyHeight(property)+ EditorGUI.GetPropertyHeight(arg1),
+                        position.width, EditorGUI.GetPropertyHeight(arg2));
+                    EditorGUI.PropertyField(Arg2Position, arg2, true);
+                }
+                EditorGUI.indentLevel--;
+            }*/
 		}
-	}
+    }
 	public System.Object GetPropertyInstance(SerializedProperty property)
 	{
 
@@ -67,10 +79,22 @@ public class FuncPropertyDrawer : PropertyDrawer
 		return obj;
 	}
 	public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-		object Inst = GetPropertyInstance(property);
-		if (type==FuncType.Null)
-            return base.GetPropertyHeight(property, label);
-		Debug.Log(((Func)Inst).PropertySize);
-		return ((Func)Inst).PropertySize;
-	}
+		
+		if (!property.isExpanded)
+            return EditorGUIUtility.singleLineHeight;
+        float sum = EditorGUI.GetPropertyHeight(property);
+        try {
+            Func Inst = (Func)GetPropertyInstance(property);
+            if (Inst.argCnt > 0) {
+                sum += EditorGUI.GetPropertyHeight(property.FindPropertyRelative("arg1"));
+                if (Inst.argCnt > 1) {
+                    sum += EditorGUI.GetPropertyHeight(property.FindPropertyRelative("arg2"));
+                }
+            }
+        }
+        catch (Exception) {
+            //TODO: Fix error on startup
+        }
+        return sum;
+    }
 }

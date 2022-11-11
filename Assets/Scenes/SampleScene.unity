@@ -172,11 +172,11 @@ MonoBehaviour:
       Noises:
       - MinFrequency: 0
         MaxFrequency: 0
-        MinAmplitude: -100
-        MaxAmplitude: -100
+        MinAmplitude: -10
+        MaxAmplitude: -10
         MinShift: {x: 0, y: 0}
         MaxShift: {x: 0, y: 0}
-        type: 2
+        type: 1
         Instance:
           Frequency: 0
           Amplitude: 0
@@ -187,68 +187,35 @@ MonoBehaviour:
     LeftEdge: 0
     Base:
     - Noises:
-      - MinFrequency: 0.001
-        MaxFrequency: 0.001
-        MinAmplitude: 10
-        MaxAmplitude: 10
+      - MinFrequency: 0.01
+        MaxFrequency: 0.01
+        MinAmplitude: 100
+        MaxAmplitude: 100
         MinShift: {x: 0, y: 0}
         MaxShift: {x: 100, y: 100}
-        type: 1
+        type: 2
         Instance:
           Frequency: 0
           Amplitude: 0
           Shift: {x: 0, y: 0}
-      - MinFrequency: 0.002
-        MaxFrequency: 0.002
-        MinAmplitude: 10
-        MaxAmplitude: 10
+      - MinFrequency: 0.02
+        MaxFrequency: 0.02
+        MinAmplitude: 50
+        MaxAmplitude: 50
         MinShift: {x: 0, y: 0}
         MaxShift: {x: 100, y: 100}
-        type: 1
+        type: 2
         Instance:
           Frequency: 0
           Amplitude: 0
           Shift: {x: 0, y: 0}
-      - MinFrequency: 0.004
-        MaxFrequency: 0.004
+      - MinFrequency: 0.04
+        MaxFrequency: 0.04
         MinAmplitude: 10
         MaxAmplitude: 10
         MinShift: {x: 0, y: 0}
         MaxShift: {x: 100, y: 100}
-        type: 1
-        Instance:
-          Frequency: 0
-          Amplitude: 0
-          Shift: {x: 0, y: 0}
-      - MinFrequency: 0.008
-        MaxFrequency: 0.008
-        MinAmplitude: 10
-        MaxAmplitude: 10
-        MinShift: {x: 0, y: 0}
-        MaxShift: {x: 100, y: 100}
-        type: 1
-        Instance:
-          Frequency: 0
-          Amplitude: 0
-          Shift: {x: 0, y: 0}
-      - MinFrequency: 0.016
-        MaxFrequency: 0.016
-        MinAmplitude: 10
-        MaxAmplitude: 10
-        MinShift: {x: 0, y: 0}
-        MaxShift: {x: 100, y: 100}
-        type: 1
-        Instance:
-          Frequency: 0
-          Amplitude: 0
-          Shift: {x: 0, y: 0}
-      - MinFrequency: 0.032
-        MaxFrequency: 0.032
-        MinAmplitude: 10
-        MaxAmplitude: 10
-        MinShift: {x: 0, y: 0}
-        MaxShift: {x: 100, y: 100}
-        type: 1
+        type: 2
         Instance:
           Frequency: 0
           Amplitude: 0
@@ -601,7 +568,6 @@ MonoBehaviour:
         arg2:
           id: 1
         argCnt: 1
-        PropertySize: 18
         k: 0
         b: 0
     00000001:

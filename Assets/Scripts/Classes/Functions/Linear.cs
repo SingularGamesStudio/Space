@@ -6,6 +6,8 @@ public class Linear : Func
 {
     public int k;
     public int b;
+    [HideInInspector]
+    public Func arg2;
     public Linear() {
         argCnt = 1;
     }
