@@ -15,11 +15,16 @@ public class FuncPropertyDrawer : PropertyDrawer
     FuncType oldtype = FuncType.Null;
     FuncType type = FuncType.Null;
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
-        EditorGUI.PropertyField(position, property, label, true);
-        EditorGUI.PropertyField(position, property, label, true);
-        Debug.Log(base.fieldInfo);
-        position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
-        type = (FuncType)EditorGUI.EnumPopup(position, type);
+		object Inst = GetPropertyInstance(property);
+		if (Inst != null) {
+			oldtype = (FuncType)Enum.Parse(typeof(FuncType), Inst.GetType().ToString());
+			property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, label);
+		} else {
+			oldtype = FuncType.Null;
+			property.isExpanded = false;
+		}
+		position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+        type = (FuncType)EditorGUI.EnumPopup(position, oldtype);
         if (type != oldtype) {
             if (type == FuncType.Null) {
                 property.managedReferenceValue = null;
@@ -29,16 +34,43 @@ public class FuncPropertyDrawer : PropertyDrawer
                 property.managedReferenceValue = System.Activator.CreateInstance(t);
             }
         }
-        oldtype = type;
-        //property.managedReferenceValue = new Linear();
-        /*if ( == null) {
-            var amountRect = new Rect(position.x, position.y, 30, position.height);
-            EditorGUI.TextField(amountRect, "test");
-        }*/
-    }
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-        if(type==FuncType.Null)
+		if(Inst!=null)
+		((Func)Inst).PropertySize = EditorGUIUtility.singleLineHeight;
+		if (property.isExpanded) {
+			EditorGUI.indentLevel++;
+			Rect pos1 = position;
+			pos1.y += EditorGUIUtility.singleLineHeight;
+			EditorGUI.PropertyField(pos1, property, label, true);
+			((Func)Inst).PropertySize +=base.GetPropertyHeight(property, label);
+			EditorGUI.indentLevel--;
+		}
+	}
+	public System.Object GetPropertyInstance(SerializedProperty property)
+	{
+
+		string path = property.propertyPath;
+
+		System.Object obj = property.serializedObject.targetObject;
+		var type = obj.GetType();
+
+		var fieldNames = path.Split('.');
+		for (int i = 0; i < fieldNames.Length; i++) {
+			var info = type.GetField(fieldNames[i]);
+			if (info == null)
+				break;
+
+			// Recurse down to the next nested object.
+			obj = info.GetValue(obj);
+			type = info.FieldType;
+		}
+
+		return obj;
+	}
+	public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+		object Inst = GetPropertyInstance(property);
+		if (type==FuncType.Null)
             return base.GetPropertyHeight(property, label);
-        return 200;
-    }
+		Debug.Log(((Func)Inst).PropertySize);
+		return ((Func)Inst).PropertySize;
+	}
 }

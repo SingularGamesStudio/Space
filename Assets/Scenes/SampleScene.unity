@@ -594,13 +594,16 @@ MonoBehaviour:
   references:
     version: 1
     00000000:
-      type: {class: Sum, ns: , asm: Assembly-CSharp}
+      type: {class: Linear, ns: , asm: Assembly-CSharp}
       data:
         arg1:
           id: 1
         arg2:
           id: 1
-        argCnt: 2
+        argCnt: 1
+        PropertySize: 18
+        k: 0
+        b: 0
     00000001:
       type: {class: , ns: , asm: }
 --- !u!1 &1767517546
