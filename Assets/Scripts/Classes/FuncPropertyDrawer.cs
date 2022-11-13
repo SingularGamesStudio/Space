@@ -1,23 +1,26 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 [CustomPropertyDrawer(typeof(Func))]
-public class FuncPropertyDrawer : PropertyDrawer
+public class FuncPropertyDrawer : NestablePropertyDrawer
 {
     enum FuncType {
         Null,
         Linear,
         Sum,
+        Coord,
     }
     
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
         FuncType oldtype;
         FuncType type;
-        Func Inst = (Func)GetPropertyInstance(property);
+        //Debug.Log(GetPropertyInstance(property));
+        Func Inst = (Func)propertyObject;
         Rect ArrowPosition = new Rect(position.min.x, position.min.y+3, EditorGUIUtility.labelWidth, 15);
         if (Inst != null) {
 			oldtype = (FuncType)Enum.Parse(typeof(FuncType), Inst.GetType().ToString());
@@ -37,27 +40,14 @@ public class FuncPropertyDrawer : PropertyDrawer
                 Type t = Type.GetType(type.ToString());
                 property.managedReferenceValue = Activator.CreateInstance(t);
             }
+            Initialize(property);
         }
 		if (property.isExpanded) {
             
 			EditorGUI.PropertyField(position, property, true);
-            /*if (Inst.argCnt > 0) {
-                EditorGUI.indentLevel++;
-                SerializedProperty arg1 = property.FindPropertyRelative("arg1");
-                Debug.Log(arg1.type+" "+property.type);
-                Rect Arg1Position = new Rect(position.min.x, position.min.y + EditorGUI.GetPropertyHeight(property), position.width, EditorGUI.GetPropertyHeight(arg1));
-                EditorGUI.PropertyField(Arg1Position, arg1, true);
-                if (Inst.argCnt > 1) {
-                    SerializedProperty arg2 = property.FindPropertyRelative("arg2");
-                    Rect Arg2Position = new Rect(position.min.x, position.min.y + EditorGUI.GetPropertyHeight(property)+ EditorGUI.GetPropertyHeight(arg1),
-                        position.width, EditorGUI.GetPropertyHeight(arg2));
-                    EditorGUI.PropertyField(Arg2Position, arg2, true);
-                }
-                EditorGUI.indentLevel--;
-            }*/
 		}
     }
-	public System.Object GetPropertyInstance(SerializedProperty property)
+    /*public System.Object GetPropertyInstance(SerializedProperty property)
 	{
 
 		string path = property.propertyPath;
@@ -66,6 +56,8 @@ public class FuncPropertyDrawer : PropertyDrawer
 		var type = obj.GetType();
 
 		var fieldNames = path.Split('.');
+        Debug.Log("Path: "+path);
+        Debug.Log(type);
 		for (int i = 0; i < fieldNames.Length; i++) {
 			var info = type.GetField(fieldNames[i]);
 			if (info == null)
@@ -73,18 +65,26 @@ public class FuncPropertyDrawer : PropertyDrawer
 
 			// Recurse down to the next nested object.
 			obj = info.GetValue(obj);
-			type = info.FieldType;
-		}
+            type = info.FieldType;
+            Debug.Log(obj.GetType() +" "+ obj.GetType().IsArray);
+            if (obj.GetType().IsArray) {
+                var index = Convert.ToInt32(new string(property.propertyPath.Where(c => char.IsDigit(c)).ToArray()));
+                obj = ((System.Object[])obj)[index];
+            }
+            
+            Debug.Log(type);
+        }
 
 		return obj;
-	}
-	public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+	}*/
+
+    public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
 		
 		if (!property.isExpanded)
             return EditorGUIUtility.singleLineHeight;
         float sum = EditorGUI.GetPropertyHeight(property);
         try {
-            Func Inst = (Func)GetPropertyInstance(property);
+            Func Inst = (Func)propertyObject;
             if (Inst.argCnt > 0) {
                 sum += EditorGUI.GetPropertyHeight(property.FindPropertyRelative("arg1"));
                 if (Inst.argCnt > 1) {
@@ -93,6 +93,7 @@ public class FuncPropertyDrawer : PropertyDrawer
             }
         }
         catch (Exception) {
+            
             //TODO: Fix error on startup
         }
         return sum;

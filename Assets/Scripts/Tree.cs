@@ -60,7 +60,8 @@ public class Tree {
                     return  (new PixelState(0, false), true);
 			    }
 		    }
-        
+            /*
+             * TODO
             //Axises never intersect the current square, so the farest point is one of the angles
             float maxR = 0, minR = Root.Size*Root.Size;
             foreach (Vector2 Delta in Data.Main.Shifts01) {
@@ -77,6 +78,7 @@ public class Tree {
 
 				return  (new PixelState(0, true), true);
             }
+            */
         }
         if (Color != null)
             InitChildren(Color);

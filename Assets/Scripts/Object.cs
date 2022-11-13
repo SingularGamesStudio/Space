@@ -21,8 +21,9 @@ public class Object : MonoBehaviour {
         Root.BuildBiome();
     }
     private void Update() {
-		//Debug.Log(Tree.cnt);
-		if (Input.GetMouseButtonUp(0)) {
+        Debug.Log(Biomes[0].Base.ToString()+" "+Data.Main.Biomes[0].Base.ToString());
+        //Debug.Log(Tree.cnt);
+        if (Input.GetMouseButtonUp(0)) {
             Vector2 Pos = Utils.TransformPos(Camera.main.ScreenToWorldPoint(Input.mousePosition), transform, Size);
             List<EdgePoint> Edge = GetEdge(new Vector2Int((int)Pos.x, (int)Pos.y), 300, 8);
             if (Edge != null) {
@@ -71,18 +72,15 @@ public class Object : MonoBehaviour {
             //Right edge of biome
             int biome2ID = BiomeByPos[delta];
             float prop = 0.5f+0.5f*(10f*(Biomes[biomeID].LeftEdge + Biomes[biomeID].Size - x)) / Biomes[biomeID].Size;
-            return Mathf.Clamp(prop * Biomes[biomeID].get(x, y) + (1f - prop) * Biomes[biome2ID].get(delta - Biomes[biomeID].Size / 10f, y), 
-                Biomes[biomeID].Floor.get(x, y)- Biomes[biomeID].Amplitude,
-				Biomes[biomeID].Floor.get(x, y) + Biomes[biomeID].Amplitude);
+            //TODO: Clamp value after fixing floor
+            return prop * Biomes[biomeID].get(x, y) + (1f - prop) * Biomes[biome2ID].get(delta - Biomes[biomeID].Size / 10f, y);
 		}
 		delta = ((int)(x - Biomes[biomeID].Size / 10f)+ BiomeByPos.Length) % BiomeByPos.Length;
 		if (BiomeByPos[delta] != biomeID) {
 			//Left edge of biome
 			int biome2ID = BiomeByPos[delta];
 			float prop = 0.5f + 0.5f * (10f * (x - Biomes[biomeID].LeftEdge)) / Biomes[biomeID].Size;
-			return Mathf.Clamp(prop * Biomes[biomeID].get(x, y) + (1f - prop) * Biomes[biome2ID].get(delta+ Biomes[biomeID].Size / 10f, y),
-				Biomes[biomeID].Floor.get(x, y) - Biomes[biomeID].Amplitude,
-				Biomes[biomeID].Floor.get(x, y) + Biomes[biomeID].Amplitude);
+			return prop * Biomes[biomeID].get(x, y) + (1f - prop) * Biomes[biome2ID].get(delta+ Biomes[biomeID].Size / 10f, y);
 		}
         return Biomes[biomeID].get(x, y);
 	}

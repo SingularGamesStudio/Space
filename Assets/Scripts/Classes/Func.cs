@@ -11,17 +11,37 @@ public abstract class Func
     public Func arg2 = null;
     [HideInInspector]
     public int argCnt;
-    public float getRec(Vector2 pos) {
+    public float get(FuncPassType pos) {
         if (arg1 == null) {
-            return get(pos);
+            return getSelf(pos);
         }
         else if (arg2 == null) {
-            return get(new Vector2(arg1.getRec(pos), 0));
+            return getSelf(new FuncPassType(arg1.get(pos), 0));
         }
         else {
-            return get(new Vector2(arg1.getRec(pos), arg2.getRec(pos)));
+            return getSelf(new FuncPassType(arg1.get(pos), arg2.get(pos)));
         }
     }
     
-    public abstract float get(Vector2 args);
+    public void Init(int seed) {
+        InitSelf(seed);
+        System.Random rnd = new System.Random(seed);
+        if (argCnt == 2) {
+            arg1.Init(rnd.Next(1000000));
+            arg2.Init(rnd.Next(1000000));
+        }
+        else if (argCnt == 1) {
+            arg1.Init(rnd.Next(1000000));
+        }
+    }
+    
+    /*public Func DeepCopy() {
+        Func res = (Func)Activator.CreateInstance(this.GetType());
+        //TODO
+    }*/
+    
+
+    protected abstract void InitSelf(int seed);
+    
+    protected abstract float getSelf(FuncPassType args);
 }
