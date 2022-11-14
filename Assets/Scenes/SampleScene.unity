@@ -168,8 +168,8 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 5ae0443fa31f1a24d8e1442743cc4ea9, type: 3}
   Biomes:
   - name: Biome_1
-    MinSize: 300
-    MaxSize: 600
+    MinSize: 100
+    MaxSize: 300
     Size: 0
     LeftEdge: 0
     Base:
@@ -185,16 +185,87 @@ MonoBehaviour:
   references:
     version: 1
     00000000:
-      type: {class: Coord, ns: , asm: Assembly-CSharp}
+      type: {class: Sum, ns: , asm: Assembly-CSharp}
       data:
         arg1:
           id: 1
         arg2:
-          id: 1
+          id: 2
+        argCnt: 2
+    00000001:
+      type: {class: Linear, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 3
+        arg2:
+          id: 4
+        argCnt: 1
+        KMin: -1
+        KMax: -1
+        BMin: -50
+        BMax: 50
+        k: 0
+        b: 0
+    00000002:
+      type: {class: Linear, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 5
+        arg2:
+          id: 4
+        argCnt: 1
+        KMin: 100
+        KMax: 100
+        BMin: 0
+        BMax: 0
+        k: 0
+        b: 0
+    00000003:
+      type: {class: Coord, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 4
+        arg2:
+          id: 4
+        argCnt: 0
+        axis: 1
+        FreqMin: 1
+        FreqMax: 1
+        freq: 0
+    00000004:
+      type: {class: , ns: , asm: }
+    00000005:
+      type: {class: Perlin, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 6
+        arg2:
+          id: 7
+        argCnt: 2
+    00000006:
+      type: {class: Coord, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 4
+        arg2:
+          id: 4
+        argCnt: 0
+        axis: 1
+        FreqMin: 0.01
+        FreqMax: 0.01
+        freq: 0
+    00000007:
+      type: {class: Coord, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 4
+        arg2:
+          id: 4
         argCnt: 0
         axis: 0
-    00000001:
-      type: {class: , ns: , asm: }
+        FreqMin: 0.01
+        FreqMax: 0.01
+        freq: 0
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -638,12 +709,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d3240dc3c096964b84b17256836e0b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Size: 2048
+  Size: 1024
   DebugMode: 1
   Renderer: {fileID: 2106544243}
   Biomes: []
   BiomeByPos: 
-  PlanetRadius: 700
+  PlanetRadius: 300
   seed: 0
   references:
     version: 1

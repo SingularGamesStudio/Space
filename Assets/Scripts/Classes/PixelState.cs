@@ -19,4 +19,18 @@ public class PixelState
     }
     public static bool operator !=(PixelState a, PixelState b)
         => !(a == b);
+	public override bool Equals(object obj)
+	{
+		var item = obj as PixelState;
+
+		if (item == null) {
+			return false;
+		}
+
+        return this == item;
+	}
+	public override int GetHashCode()
+	{
+		return TextureID*2+(Active?1:0);
+	}
 }

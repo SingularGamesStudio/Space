@@ -9,17 +9,19 @@ using UnityEngine.UIElements;
 [CustomPropertyDrawer(typeof(Func))]
 public class FuncPropertyDrawer : NestablePropertyDrawer
 {
+    //TODO
     enum FuncType {
         Null,
         Linear,
         Sum,
         Coord,
+		Perlin,
     }
     
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+        Initialize(property);
         FuncType oldtype;
         FuncType type;
-        //Debug.Log(GetPropertyInstance(property));
         Func Inst = (Func)propertyObject;
         Rect ArrowPosition = new Rect(position.min.x, position.min.y+3, EditorGUIUtility.labelWidth, 15);
         if (Inst != null) {
@@ -40,46 +42,16 @@ public class FuncPropertyDrawer : NestablePropertyDrawer
                 Type t = Type.GetType(type.ToString());
                 property.managedReferenceValue = Activator.CreateInstance(t);
             }
-            Initialize(property);
+            ForceInitialize(property);
         }
 		if (property.isExpanded) {
             
 			EditorGUI.PropertyField(position, property, true);
 		}
     }
-    /*public System.Object GetPropertyInstance(SerializedProperty property)
-	{
-
-		string path = property.propertyPath;
-
-		System.Object obj = property.serializedObject.targetObject;
-		var type = obj.GetType();
-
-		var fieldNames = path.Split('.');
-        Debug.Log("Path: "+path);
-        Debug.Log(type);
-		for (int i = 0; i < fieldNames.Length; i++) {
-			var info = type.GetField(fieldNames[i]);
-			if (info == null)
-				break;
-
-			// Recurse down to the next nested object.
-			obj = info.GetValue(obj);
-            type = info.FieldType;
-            Debug.Log(obj.GetType() +" "+ obj.GetType().IsArray);
-            if (obj.GetType().IsArray) {
-                var index = Convert.ToInt32(new string(property.propertyPath.Where(c => char.IsDigit(c)).ToArray()));
-                obj = ((System.Object[])obj)[index];
-            }
-            
-            Debug.Log(type);
-        }
-
-		return obj;
-	}*/
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-		
+		//TODO:fix this, now returns too much
 		if (!property.isExpanded)
             return EditorGUIUtility.singleLineHeight;
         float sum = EditorGUI.GetPropertyHeight(property);

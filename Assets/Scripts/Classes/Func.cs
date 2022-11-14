@@ -35,12 +35,19 @@ public abstract class Func
         }
     }
     
-    /*public Func DeepCopy() {
-        Func res = (Func)Activator.CreateInstance(this.GetType());
-        //TODO
-    }*/
-    
+    public Func DeepCopy() {
+        Func res = DeepCopySelf();
+        res.arg1 = null;
+        res.arg2 = null;
+		if(arg1!=null)
+		    res.arg1 = arg1.DeepCopy();
+		if (arg2 != null)
+			res.arg2 = arg2.DeepCopy();
+        return res;
+	}
 
+    protected abstract Func DeepCopySelf();
+	
     protected abstract void InitSelf(int seed);
     
     protected abstract float getSelf(FuncPassType args);

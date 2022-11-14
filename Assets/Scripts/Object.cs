@@ -21,8 +21,6 @@ public class Object : MonoBehaviour {
         Root.BuildBiome();
     }
     private void Update() {
-        Debug.Log(Biomes[0].Base.ToString()+" "+Data.Main.Biomes[0].Base.ToString());
-        //Debug.Log(Tree.cnt);
         if (Input.GetMouseButtonUp(0)) {
             Vector2 Pos = Utils.TransformPos(Camera.main.ScreenToWorldPoint(Input.mousePosition), transform, Size);
             List<EdgePoint> Edge = GetEdge(new Vector2Int((int)Pos.x, (int)Pos.y), 300, 8);
@@ -54,7 +52,6 @@ public class Object : MonoBehaviour {
             else biome.Init(rnd.Next(100000), rnd.Next(biome.MinSize, Mathf.Min(Length-Data.Main.MinBiomeSize, biome.MaxSize)), PlanetRadius);
             biome.LeftEdge = iter;
             Biomes.Add(biome);
-            //Debug.Log(biome.Size + " " + biome.Floor.Instance.Shift);
             Length -= biome.Size;
             for (int i = iter; i < iter + biome.Size; i++) {
                 BiomeByPos[i] = Biomes.Count - 1;
@@ -64,25 +61,28 @@ public class Object : MonoBehaviour {
         }
         BiomeByPos[Length] = Biomes.Count-1;
     }
-    public float GetSmoothBiomeValue(float x, float y)
+    public float GetSmoothBiomeValue(FuncPassType data)
     {
-        int biomeID = BiomeByPos[(int)x];
-        int delta = ((int)(x + Biomes[biomeID].Size / 10f)) % BiomeByPos.Length;
+        float polarX = (Mathf.Atan2(data.y, data.x) + Mathf.PI) * PlanetRadius;
+		int biomeID = BiomeByPos[(int)polarX];
+        int delta = ((int)(polarX + Biomes[biomeID].Size / 10f)) % BiomeByPos.Length;
 		if (BiomeByPos[delta] != biomeID) {
             //Right edge of biome
             int biome2ID = BiomeByPos[delta];
-            float prop = 0.5f+0.5f*(10f*(Biomes[biomeID].LeftEdge + Biomes[biomeID].Size - x)) / Biomes[biomeID].Size;
+            float prop = 0.5f+0.5f*(10f*(Biomes[biomeID].LeftEdge + Biomes[biomeID].Size - polarX)) / Biomes[biomeID].Size;
             //TODO: Clamp value after fixing floor
-            return prop * Biomes[biomeID].get(x, y) + (1f - prop) * Biomes[biome2ID].get(delta - Biomes[biomeID].Size / 10f, y);
+            return prop * Biomes[biomeID].get(new FuncPassType(data.x, data.y, PlanetRadius, Biomes[biomeID].LeftEdge+ 0.5f*Biomes[biomeID].Size)) +
+				(1f - prop) * Biomes[biome2ID].get(new FuncPassType(/*TODOdelta - Biomes[biomeID].Size / 10f*/data.x, data.y, PlanetRadius, Biomes[biome2ID].LeftEdge + 0.5f * Biomes[biome2ID].Size));
 		}
-		delta = ((int)(x - Biomes[biomeID].Size / 10f)+ BiomeByPos.Length) % BiomeByPos.Length;
+		delta = ((int)(polarX - Biomes[biomeID].Size / 10f)+ BiomeByPos.Length) % BiomeByPos.Length;
 		if (BiomeByPos[delta] != biomeID) {
 			//Left edge of biome
 			int biome2ID = BiomeByPos[delta];
-			float prop = 0.5f + 0.5f * (10f * (x - Biomes[biomeID].LeftEdge)) / Biomes[biomeID].Size;
-			return prop * Biomes[biomeID].get(x, y) + (1f - prop) * Biomes[biome2ID].get(delta+ Biomes[biomeID].Size / 10f, y);
+			float prop = 0.5f + 0.5f * (10f * (polarX - Biomes[biomeID].LeftEdge)) / Biomes[biomeID].Size;
+			return prop * Biomes[biomeID].get(new FuncPassType(data.x, data.y, PlanetRadius, Biomes[biomeID].LeftEdge + 0.5f * Biomes[biomeID].Size)) + 
+                (1f - prop) * Biomes[biome2ID].get(new FuncPassType(/*TODOdelta+ Biomes[biomeID].Size / 10f*/data.x, data.y, PlanetRadius, Biomes[biome2ID].LeftEdge + 0.5f * Biomes[biome2ID].Size));
 		}
-        return Biomes[biomeID].get(x, y);
+        return Biomes[biomeID].get(new FuncPassType(data.x, data.y, PlanetRadius, Biomes[biomeID].LeftEdge + 0.5f * Biomes[biomeID].Size));
 	}
     public void Transform(List<EdgePoint> Edge, List<Vector2> NewEdge) {
         float Delta = ((float)Edge.Count) / (NewEdge.Count - 1);

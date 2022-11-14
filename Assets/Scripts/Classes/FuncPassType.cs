@@ -11,8 +11,8 @@ public class FuncPassType
     public float x;
     public float y;
     public int r;
-    public int biomeCenter;
-    public FuncPassType(float x, float y, int r, int biomeCenter) {
+    public float biomeCenter;
+    public FuncPassType(float x, float y, int r, float biomeCenter) {
         this.x = x;
         this.y = y;
         this.r = r;

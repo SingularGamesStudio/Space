@@ -22,7 +22,7 @@ public class Biome
         MinSize = toCopy.MinSize;
         MaxSize = toCopy.MaxSize;
         Size = toCopy.Size;
-		Base = toCopy.Base;
+		Base = toCopy.Base.DeepCopy();
 	}
 	public void Init(int seed, int newSize, int PlanetRadius)
 	{
@@ -37,8 +37,8 @@ public class Biome
         Size = newSize;
 	}
     
-	public float get(float x, float y)
+	public float get(FuncPassType data)
 	{
-		return Base.get(new FuncPassType(x, y));
+		return Base.get(data);
     }
 }

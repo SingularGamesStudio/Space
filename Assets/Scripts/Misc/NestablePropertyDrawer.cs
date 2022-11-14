@@ -11,7 +11,15 @@ public class NestablePropertyDrawer : PropertyDrawer {
     protected Type objectType = null;
 
     private static readonly Regex matchArrayElement = new Regex(@"^data\[(\d+)\]$");
-    protected virtual void Initialize(SerializedProperty prop) {
+
+    protected virtual void ForceInitialize(SerializedProperty property)
+    {
+        initialized = false;
+        Initialize(property);
+    }
+
+
+	protected virtual void Initialize(SerializedProperty prop) {
         if (initialized)
             return;
 

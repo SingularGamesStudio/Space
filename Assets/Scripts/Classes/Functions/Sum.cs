@@ -10,4 +10,8 @@ public class Sum : Func {
         return args.x + args.y;
     }
     protected override void InitSelf(int seed) { }
+	protected override Func DeepCopySelf()
+	{
+		return new Sum();
+	}
 }
