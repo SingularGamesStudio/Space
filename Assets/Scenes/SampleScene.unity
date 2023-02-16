@@ -207,19 +207,13 @@ MonoBehaviour:
         k: 0
         b: 0
     00000002:
-      type: {class: Linear, ns: , asm: Assembly-CSharp}
+      type: {class: Sum, ns: , asm: Assembly-CSharp}
       data:
         arg1:
           id: 5
         arg2:
-          id: 4
-        argCnt: 1
-        KMin: 100
-        KMax: 100
-        BMin: 0
-        BMax: 0
-        k: 0
-        b: 0
+          id: 6
+        argCnt: 2
     00000003:
       type: {class: Coord, ns: , asm: Assembly-CSharp}
       data:
@@ -235,14 +229,62 @@ MonoBehaviour:
     00000004:
       type: {class: , ns: , asm: }
     00000005:
+      type: {class: Linear, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 7
+        arg2:
+          id: 4
+        argCnt: 1
+        KMin: 100
+        KMax: 100
+        BMin: 0
+        BMax: 0
+        k: 0
+        b: 0
+    00000006:
+      type: {class: Linear, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 8
+        arg2:
+          id: 4
+        argCnt: 1
+        KMin: 30
+        KMax: 30
+        BMin: 0
+        BMax: 0
+        k: 0
+        b: 0
+    00000007:
       type: {class: Perlin, ns: , asm: Assembly-CSharp}
       data:
         arg1:
-          id: 6
+          id: 9
         arg2:
-          id: 7
+          id: 10
         argCnt: 2
-    00000006:
+    00000008:
+      type: {class: Perlin, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 11
+        arg2:
+          id: 12
+        argCnt: 2
+    00000009:
+      type: {class: Coord, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 4
+        arg2:
+          id: 4
+        argCnt: 0
+        axis: 0
+        FreqMin: 0.01
+        FreqMax: 0.01
+        freq: 0
+    0000000A:
       type: {class: Coord, ns: , asm: Assembly-CSharp}
       data:
         arg1:
@@ -254,7 +296,7 @@ MonoBehaviour:
         FreqMin: 0.01
         FreqMax: 0.01
         freq: 0
-    00000007:
+    0000000B:
       type: {class: Coord, ns: , asm: Assembly-CSharp}
       data:
         arg1:
@@ -263,8 +305,20 @@ MonoBehaviour:
           id: 4
         argCnt: 0
         axis: 0
-        FreqMin: 0.01
-        FreqMax: 0.01
+        FreqMin: 0.02
+        FreqMax: 0.02
+        freq: 0
+    0000000C:
+      type: {class: Coord, ns: , asm: Assembly-CSharp}
+      data:
+        arg1:
+          id: 4
+        arg2:
+          id: 4
+        argCnt: 0
+        axis: 1
+        FreqMin: 0.02
+        FreqMax: 0.02
         freq: 0
 --- !u!20 &519420031
 Camera:

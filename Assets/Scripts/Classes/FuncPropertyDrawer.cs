@@ -17,9 +17,18 @@ public class FuncPropertyDrawer : NestablePropertyDrawer
         Coord,
 		Perlin,
     }
-    
+    private bool functionsInitialized = false;
+    private void InitializeFunctions()
+    {
+        if (functionsInitialized)
+            return;
+        functionsInitialized = true;
+		
+		//TODO
+    }
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
         Initialize(property);
+        InitializeFunctions();
         FuncType oldtype;
         FuncType type;
         Func Inst = (Func)propertyObject;

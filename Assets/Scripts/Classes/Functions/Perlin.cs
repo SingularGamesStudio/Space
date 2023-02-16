@@ -10,7 +10,7 @@ public class Perlin : Func
     }
     protected override float getSelf(FuncPassType args)
     {
-        return Mathf.PerlinNoise(args.x, args.y);
+        return 2f*Mathf.PerlinNoise(args.x, args.y)-1f;
     }
     protected override Func DeepCopySelf()
     {

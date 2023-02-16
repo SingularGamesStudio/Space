@@ -104,4 +104,9 @@ public static class Utils
             return true;
         return false;
     }
+
+    public static float CrossProduct(Vector2 a, Vector2 b)
+    {
+        return a.x * b.y - b.x * a.y;
+    }
 }
