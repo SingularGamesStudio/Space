@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 [CustomPropertyDrawer(typeof(Func))]
 public class FuncPropertyDrawer : NestablePropertyDrawer
 {
-    //TODO
+    //TODO:many errors here but i don't care for now
     enum FuncType {
         Null,
         Linear,

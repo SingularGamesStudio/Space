@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class test : MonoBehaviour
 {
+    //TODO:delete when finished
     Queue<float> fps = new Queue<float>();
     float sum = 0;
     private void Start() {

@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectRenderer : MonoBehaviour
+public class PlanetRenderer : MonoBehaviour
 {
-    public Object Parent;
+    public Planet Parent;
     public List<GameObject> Tracking;
     public int VisionRange;
     public int CellSize;// must be a big enough power of 2, more than VisionRange*2
@@ -23,14 +23,14 @@ public class ObjectRenderer : MonoBehaviour
         public Vector2Int Pos;
         public MeshRenderer Instance;
         public int Size;
-        public RenderArea(Vector2Int Pos, int Size, ObjectRenderer Parent) {
+        public RenderArea(Vector2Int Pos, int Size, PlanetRenderer Parent) {
             this.Pos = Pos;
             this.Size = Size;
             Rec = Instantiate(Data.Main.CameraRenderer).GetComponent<Camera>();
             Rec.orthographicSize = Size / 2f / 100f;
             Tex = new RenderTexture(Size, Size, 0);
             Rec.targetTexture = Tex;
-            Instance = Instantiate(Data.Main.ObjectRenderer).GetComponent<MeshRenderer>();
+            Instance = Instantiate(Data.Main.PlanetRenderer).GetComponent<MeshRenderer>();
             Mat = new Material(Shader.Find("Unlit/Texture"));
             Mat.mainTexture = Tex;
             Instance.material = Mat;

@@ -5,6 +5,7 @@ using System;
 
 public static class Utils
 {
+    //TODO:split into categories?
 	public static Vector2 TransformPos(Vector3 WorldPos, SpriteRenderer Sprite) {
         Vector2 Pos = Sprite.transform.InverseTransformPoint(WorldPos);
         Pos *= 100;

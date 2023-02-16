@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 
 public class NestablePropertyDrawer : PropertyDrawer {
+    //TODO:rewrite this into a custom editor, this works slow af
     private bool initialized = false;
     protected object propertyObject = null;
     protected Type objectType = null;

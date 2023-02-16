@@ -9,7 +9,7 @@ public class Data : MonoBehaviour
     public List<Texture2D> Textures;
     public List<Biome> Biomes;
     public List<Material> Materials;
-    public GameObject ObjectRenderer;
+    public GameObject PlanetRenderer;
     public GameObject CameraRenderer;
     public GameObject EmptySprite;
     public int MinBiomeSize = 100000;

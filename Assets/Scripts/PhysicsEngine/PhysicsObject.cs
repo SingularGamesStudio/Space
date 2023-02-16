@@ -6,18 +6,18 @@ using UnityEngine.UI;
 
 public abstract class PhysicsObject : MonoBehaviour
 {
-    
+    public enum Intersection
+    {
+        Inside,
+        Partial,
+        None
+    }
     protected float angularVelocity = 0;
 	protected float torque = 0;
-	protected Vector2 force = 0;
-	protected Vector2 velocity = 0;
+	protected Vector2 force = Vector2.zero;
+	protected Vector2 velocity = Vector2.zero;
 	protected Vector2 massCenter;
-    public float Mass;
-
-    private void Awake()
-    {
-        massCenter = transform.position;
-    }
+    public float mass;
     public void ApplyForce(Vector2 force, Vector2 pos)
     {
         Vector2 r = pos - massCenter;
@@ -25,12 +25,14 @@ public abstract class PhysicsObject : MonoBehaviour
         this.force += force;
     }
 
-    protected abstract void move();
+    public abstract Intersection GetIntersection(Rect rect);
+
+    public abstract float Size();
 
     private void FixedUpdate()
     {
         angularVelocity += torque * Time.fixedDeltaTime;
-        velocity += (force / Mass) * Time.fixedDeltaTime;
-        move();
+        velocity += (force / mass) * Time.fixedDeltaTime;
+        //move();
     }
 }

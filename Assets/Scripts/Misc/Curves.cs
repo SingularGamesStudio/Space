@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class Curves
 {
-
+    //TODO:remove as outdated?
     /// <summary>
     /// Shifts points by a given curve
     /// </summary>

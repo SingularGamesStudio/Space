@@ -5,11 +5,11 @@ using System;
 using UnityEngine.XR;
 using System.Linq;
 
-public class Object : MonoBehaviour {
+public class Planet : MonoBehaviour {
     public Tree Root;
     public int Size = 256;
     public bool DebugMode;
-    public ObjectRenderer Renderer;
+    public PlanetRenderer Renderer;
     public List<Biome> Biomes;
     public int[] BiomeByPos;
     public int PlanetRadius = 128;

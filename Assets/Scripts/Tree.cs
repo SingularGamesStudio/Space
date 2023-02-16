@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 public class Tree {
     public Tree Parent = null;
-    public Object Root = null;
+    public Planet Root = null;
     public Tree[] Children = new Tree[4];//numbered as basic quarters of the plane (right-up, left-up, left-down, right-down)
     public Vector2Int Pos = new Vector2Int(0, 0);
     public int Size = 0;
@@ -24,13 +24,19 @@ public class Tree {
     /// <summary>
     /// Initialize root of a tree
     /// </summary>
-    public Tree(int Size, Object Root, PixelState Color) {
+    public Tree(int Size, Planet Root, PixelState Color) {
         this.Parent = null;
         this.Pos = new Vector2Int(0, 0);
         this.Size = Size;
         this.Root = Root;
         this.Color = Color;
     }
+
+    public Rect GetRect()
+    {
+        throw new NotImplementedException();
+    }
+
     public ValueTuple<PixelState, bool> BuildBiome(Biome biome = null)
     {
         if (biome == null) {
