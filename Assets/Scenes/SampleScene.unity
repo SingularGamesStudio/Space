@@ -178,7 +178,7 @@ MonoBehaviour:
   Materials:
   - {fileID: 2100000, guid: 5b59006ef939a9447844738cd0e4e862, type: 2}
   - {fileID: 2100000, guid: bc6dc0192ed3d69459c4b81601b3c3a3, type: 2}
-  ObjectRenderer: {fileID: 7539793936208114131, guid: c5a0d8c0ec9e6b24baa53fe638421eec, type: 3}
+  PlanetRenderer: {fileID: 7539793936208114131, guid: c5a0d8c0ec9e6b24baa53fe638421eec, type: 3}
   CameraRenderer: {fileID: 910146596427575832, guid: e982b11be8411ac4084c056b684fd1a1, type: 3}
   EmptySprite: {fileID: 1767517546}
   MinBiomeSize: 100000

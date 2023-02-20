@@ -3,13 +3,21 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 public class Tree {
+    //structure
     public Tree Parent = null;
     public Planet Root = null;
     public Tree[] Children = new Tree[4];//numbered as basic quarters of the plane (right-up, left-up, left-down, right-down)
-    public Vector2Int Pos = new Vector2Int(0, 0);
+    //shape
+	public Vector2Int Pos = new Vector2Int(0, 0);
     public int Size = 0;
+    //contents
     public PixelState Color = null;
+	[HideInInspector]
+	public SortedSet<PhysicsObject> objects;
     [HideInInspector]
+    public int objectsCnt = 0;
+    //TODO:remove extra stuff
+	[HideInInspector]
     public bool rendered = false;
     public static int cnt;
 

@@ -16,7 +16,7 @@ public abstract class PhysicsObject : MonoBehaviour
 	protected float torque = 0;
 	protected Vector2 force = Vector2.zero;
 	protected Vector2 velocity = Vector2.zero;
-	protected Vector2 massCenter;
+	public Vector2 massCenter;
     public float mass;
     public void ApplyForce(Vector2 force, Vector2 pos)
     {
@@ -27,12 +27,24 @@ public abstract class PhysicsObject : MonoBehaviour
 
     public abstract Intersection GetIntersection(Rect rect);
 
-    public abstract float Size();
+	public abstract Intersection GetIntersection(PhysicsObject other);
 
-    private void FixedUpdate()
+	public abstract float Size();
+    public void move()
     {
-        angularVelocity += torque * Time.fixedDeltaTime;
-        velocity += (force / mass) * Time.fixedDeltaTime;
-        //move();
-    }
+		gameObject.transform.position += (Vector3)velocity;
+		gameObject.transform.Rotate(new Vector3(angularVelocity, 0, 0));
+	}
+	public void unmove()
+	{
+		gameObject.transform.position -= (Vector3)velocity;
+		gameObject.transform.Rotate(new Vector3(-angularVelocity, 0, 0));
+	}
+
+	public void PhysicsTick()
+    {
+		angularVelocity += torque * Time.fixedDeltaTime;
+		velocity += (force / mass) * Time.fixedDeltaTime;
+        move();
+	}
 }

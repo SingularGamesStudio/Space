@@ -6,6 +6,15 @@ using System;
 public static class Utils
 {
     //TODO:split into categories?
+    public static List<Vector2> rectPoints(Rect rect)
+    {
+        List<Vector2> points = new List<Vector2>();
+        points.Add(new Vector2(rect.xMin, rect.yMin));
+		points.Add(new Vector2(rect.xMax, rect.yMin));
+		points.Add(new Vector2(rect.xMin, rect.yMax));
+		points.Add(new Vector2(rect.xMax, rect.yMax));
+        return points;
+	}
 	public static Vector2 TransformPos(Vector3 WorldPos, SpriteRenderer Sprite) {
         Vector2 Pos = Sprite.transform.InverseTransformPoint(WorldPos);
         Pos *= 100;

@@ -15,9 +15,10 @@ public class Planet : MonoBehaviour {
     public int PlanetRadius = 128;
     public int seed = 42;
 
+    
     void Start() {
         Root = new Tree(Size, this, new PixelState(0, true));
-        InitPlanet(seed);
+		InitPlanet(seed);
         Root.BuildBiome();
     }
     private void Update() {
@@ -33,6 +34,11 @@ public class Planet : MonoBehaviour {
                 Transform(Edge, NewEdge);
             }
         }
+    }
+
+    public Rect GetRect()
+    {
+        return Root.GetRect();
     }
 
     public void InitPlanet(int seed)

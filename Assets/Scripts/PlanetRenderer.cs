@@ -90,7 +90,6 @@ public class PlanetRenderer : MonoBehaviour
         DelayedDraw.Clear();
         Render();
         
-        
         //update viewed area
         List<RenderArea> added = new List<RenderArea>();
         foreach (GameObject g in Tracking) {
@@ -116,7 +115,7 @@ public class PlanetRenderer : MonoBehaviour
         if (added.Count>0) {
             DrawRecursive(Parent.Root, added);
         }
-    }
+	}
     
     void Render() {
         foreach (int id in DrawOrder) {
