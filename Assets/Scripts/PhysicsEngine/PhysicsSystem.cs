@@ -15,6 +15,7 @@ public class PhysicsSystem : MonoBehaviour
         }
         if (t == null) {
             foreach (Planet p in planets) {
+                //Debug.Log(obj.GetRect());
                 PhysicsObject.Intersection coll = obj.GetIntersection(p.GetRect());
                 if (coll == PhysicsObject.Intersection.Inside) {
                     t = p.Root;
@@ -27,7 +28,7 @@ public class PhysicsSystem : MonoBehaviour
             t.objects.Remove(obj);
 			t.objectsCnt--;
 		}
-        while (t.Parent != null && obj.GetIntersection(t.GetRect()) != PhysicsObject.Intersection.Inside) {
+		while (t.Parent != null && obj.GetIntersection(t.GetRect()) != PhysicsObject.Intersection.Inside) {
             t = t.Parent;
             t.objectsCnt--;
         }
@@ -48,7 +49,9 @@ public class PhysicsSystem : MonoBehaviour
             if (!ok)
                 break;
         }
-        t.objectsCnt++;
+		t.objectsCnt++;
+        if (t.objects == null)
+            t.objects = new SortedSet<PhysicsObject>();
         t.objects.Add(obj);
     }
 
@@ -66,7 +69,7 @@ public class PhysicsSystem : MonoBehaviour
 
 	private void updateParents(Tree t)
 	{
-		foreach (PhysicsObject obj in t.objects) {
+		foreach (PhysicsObject obj in t.objects.ToList()) {
             FindBounds(obj, t, true);
 		}
 		if (t.objectsCnt > t.objects.Count) {
@@ -113,20 +116,29 @@ public class PhysicsSystem : MonoBehaviour
             objects.Pop();
 		}
 	}
-
+    float t0;
     void FixedUpdate()
     {
         foreach (PhysicsObject obj in addedObjects)
         {
             FindBounds(obj);
-            obj.ApplyForce(new Vector2(-0.001f, 0), obj.massCenter);//!!!
+            obj.ApplyForce(new Vector2(0, -0.01f), obj.massCenter);//!!!
         }
-        addedObjects.Clear();
+		addedObjects.Clear();
         foreach(Planet p in planets) {
-            moveAll(p.Root);
-            updateParents(p.Root);
-            Collide(p.Root, new Stack<PhysicsObject>());
-            updateParents(p.Root);
-        }
-    }
+			t0 = Time.realtimeSinceStartup;
+			moveAll(p.Root);
+			Debug.Log("a " + (Time.realtimeSinceStartup - t0));
+			t0 = Time.realtimeSinceStartup;
+			updateParents(p.Root);
+			Debug.Log("b "+(Time.realtimeSinceStartup - t0));
+			t0 = Time.realtimeSinceStartup;
+			Collide(p.Root, new Stack<PhysicsObject>());
+			Debug.Log("c " + (Time.realtimeSinceStartup - t0));
+			t0 = Time.realtimeSinceStartup;
+			updateParents(p.Root);
+			
+		}
+		
+	}
 }

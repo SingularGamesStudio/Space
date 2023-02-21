@@ -6,13 +6,18 @@ using System;
 public static class Utils
 {
     //TODO:split into categories?
-    public static List<Vector2> rectPoints(Rect rect)
+    public static List<Vector2> rectPoints(Rect rect, Vector2 rotCenter, float rotation = 0)
     {
         List<Vector2> points = new List<Vector2>();
-        points.Add(new Vector2(rect.xMin, rect.yMin));
-		points.Add(new Vector2(rect.xMax, rect.yMin));
-		points.Add(new Vector2(rect.xMin, rect.yMax));
-		points.Add(new Vector2(rect.xMax, rect.yMax));
+        points.Add(new Vector2(rect.xMin-rotCenter.x, rect.yMin - rotCenter.y));
+		points.Add(new Vector2(rect.xMax - rotCenter.x, rect.yMin - rotCenter.y));
+		points.Add(new Vector2(rect.xMin - rotCenter.x, rect.yMax - rotCenter.y));
+		points.Add(new Vector2(rect.xMax - rotCenter.x, rect.yMax - rotCenter.y));
+        for(int i = 0; i<4; i++) {
+            points[i] = new Vector2(rotCenter.x + Mathf.Cos(rotation) * points[i].x - Mathf.Sin(rotation) * points[i].y,
+									rotCenter.y + Mathf.Sin(rotation) * points[i].x + Mathf.Cos(rotation) * points[i].y);
+
+		}
         return points;
 	}
 	public static Vector2 TransformPos(Vector3 WorldPos, SpriteRenderer Sprite) {

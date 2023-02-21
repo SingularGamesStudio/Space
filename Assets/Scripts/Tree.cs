@@ -13,7 +13,7 @@ public class Tree {
     //contents
     public PixelState Color = null;
 	[HideInInspector]
-	public SortedSet<PhysicsObject> objects;
+	public SortedSet<PhysicsObject> objects = new SortedSet<PhysicsObject>();
     [HideInInspector]
     public int objectsCnt = 0;
     //TODO:remove extra stuff
@@ -42,7 +42,7 @@ public class Tree {
 
     public Rect GetRect()
     {
-        throw new NotImplementedException();
+        return new Rect(Utils.InverseTransformPos(Pos, Root.transform, Root.Size), Utils.InverseTransformPos(Pos + new Vector2(Size, Size), Root.transform, Root.Size) - Utils.InverseTransformPos(Pos, Root.transform, Root.Size));
     }
 
     public ValueTuple<PixelState, bool> BuildBiome(Biome biome = null)
