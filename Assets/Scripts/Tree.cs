@@ -12,6 +12,7 @@ public class Tree {
     public int Size = 0;
     //contents
     public PixelState Color = null;
+    public BoxCollider2D coll;
 	[HideInInspector]
 	public SortedSet<PhysicsObject> objects = new SortedSet<PhysicsObject>();
     [HideInInspector]
@@ -28,7 +29,13 @@ public class Tree {
         this.Root = Parent.Root;
         this.Color = Parent.Color;
         cnt++;
-    }
+		/*if (Color.Active) {
+			coll = Root.gameObject.AddComponent<BoxCollider2D>();
+			Debug.Log(coll.name);
+			coll.size = Vector2.one;
+			coll.offset = Utils.InverseTransformPos(Pos + new Vector2(Size / 2f, Size / 2f), Root.transform, Root.Size);
+		}*/
+	}
     /// <summary>
     /// Initialize root of a tree
     /// </summary>
@@ -38,7 +45,8 @@ public class Tree {
         this.Size = Size;
         this.Root = Root;
         this.Color = Color;
-    }
+        //PhysicsShape
+	}
 
     public Rect GetRect()
     {
@@ -118,6 +126,9 @@ public class Tree {
         if (NewColor == null) {
             Debug.LogError("Color not defined");
             return;
+        }
+        if (Color.Active) {
+            UnityEngine.Object.Destroy(coll);
         }
         for (int i = 0; i < Children.Length; i++) {
             Children[i] = new Tree(this, Pos + Data.Main.Shifts01[i] * (Size / 2));
