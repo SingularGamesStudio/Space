@@ -12,15 +12,8 @@ public class Tree {
     public int Size = 0;
     //contents
     public PixelState Color = null;
-    public BoxCollider2D coll;
-	[HideInInspector]
-	public SortedSet<PhysicsObject> objects = new SortedSet<PhysicsObject>();
-    [HideInInspector]
-    public int objectsCnt = 0;
-    //TODO:remove extra stuff
 	[HideInInspector]
     public bool rendered = false;
-    public static int cnt;
 
     public Tree(Tree Parent, Vector2Int Pos) {
         this.Parent = Parent;
@@ -28,13 +21,6 @@ public class Tree {
         this.Size = Parent.Size / 2;
         this.Root = Parent.Root;
         this.Color = Parent.Color;
-        cnt++;
-		/*if (Color.Active) {
-			coll = Root.gameObject.AddComponent<BoxCollider2D>();
-			Debug.Log(coll.name);
-			coll.size = Vector2.one;
-			coll.offset = Utils.InverseTransformPos(Pos + new Vector2(Size / 2f, Size / 2f), Root.transform, Root.Size);
-		}*/
 	}
     /// <summary>
     /// Initialize root of a tree
@@ -45,7 +31,6 @@ public class Tree {
         this.Size = Size;
         this.Root = Root;
         this.Color = Color;
-        //PhysicsShape
 	}
 
     public Rect GetRect()
@@ -53,6 +38,9 @@ public class Tree {
         return new Rect(Utils.InverseTransformPos(Pos, Root.transform, Root.Size), Utils.InverseTransformPos(Pos + new Vector2(Size, Size), Root.transform, Root.Size) - Utils.InverseTransformPos(Pos, Root.transform, Root.Size));
     }
 
+    /// <summary>
+    /// draw biome at this square
+    /// </summary>
     public ValueTuple<PixelState, bool> BuildBiome(Biome biome = null)
     {
         if (biome == null) {
@@ -122,18 +110,20 @@ public class Tree {
 		}
 		return  (Color, false);
 	}
-	public void InitChildren(PixelState NewColor) {
+
+	private void InitChildren(PixelState NewColor) {
         if (NewColor == null) {
             Debug.LogError("Color not defined");
             return;
-        }
-        if (Color.Active) {
-            UnityEngine.Object.Destroy(coll);
         }
         for (int i = 0; i < Children.Length; i++) {
             Children[i] = new Tree(this, Pos + Data.Main.Shifts01[i] * (Size / 2));
         }
     }
+
+    /// <summary>
+    /// find a leaf containing given point
+    /// </summary>
     public Tree Locate(Vector2 Point) {
         if (Color != null)
             return this;
@@ -154,9 +144,9 @@ public class Tree {
             }
         }
     }
-    
-    
-    
+    /// <summary>
+    /// find closest parent containing a point
+    /// </summary>
     public Tree LocateUp(Vector2 Point)
     {
         if (Utils.PointInSquare(Pos, Size, Point)) {
@@ -165,14 +155,14 @@ public class Tree {
         else return Parent.LocateUp(Point);
     }
 
-    public void Update(PixelState NewColor) {
+    private void Update(PixelState NewColor) {
         if (NewColor == null) {
             Debug.LogError("Color not defined");
             return;
         }
         Color = NewColor;
         Children = new Tree[4];
-        Root.Renderer.Draw(this);
+        Root.Renderer.Draw(this);//TODO
     }
 
     public ValueTuple<PixelState, bool> CircleFill(Vector2 Center, float R, PixelState NewColor) {

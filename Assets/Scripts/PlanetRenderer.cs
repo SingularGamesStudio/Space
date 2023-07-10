@@ -5,25 +5,26 @@ using UnityEngine;
 
 public class PlanetRenderer : MonoBehaviour
 {
-    public Planet Parent;
+    public Planet What;
     public List<GameObject> Tracking;
     public int VisionRange;
     public int CellSize;// must be a big enough power of 2, more than VisionRange*2
     public List<RenderArea> Cells = new List<RenderArea>();
 
-    public List<Tree> DelayedDraw = new List<Tree>();
-    public List<List<List<Matrix4x4>>> Matrices = new List<List<List<Matrix4x4>>>();
-    public List<List<List<Vector4>>> ShaderCuts = new List<List<List<Vector4>>>();
-    public Queue<int> DrawOrder = new Queue<int>();
-    public List<bool> ToBeRendered = new List<bool>();
+
+    private List<Tree> DelayedDraw = new List<Tree>();
+    private List<List<List<Matrix4x4>>> Matrices = new List<List<List<Matrix4x4>>>();
+    private List<List<List<Vector4>>> ShaderCuts = new List<List<List<Vector4>>>();
+    private Queue<int> DrawOrder = new Queue<int>();
+    private List<bool> ToBeRendered = new List<bool>();
     public class RenderArea {
-        public RenderTexture Tex;
-        public Camera Rec;
-        public Material Mat;
-        public Vector2Int Pos;
-        public MeshRenderer Instance;
-        public int Size;
-        public RenderArea(Vector2Int Pos, int Size, PlanetRenderer Parent) {
+        private RenderTexture Tex;
+        private Camera Rec;
+        private Material Mat;
+        private Vector2Int Pos;
+        private MeshRenderer Instance;
+        private int Size;
+        public RenderArea(Vector2Int Pos, int Size, PlanetRenderer Renderer) {
             this.Pos = Pos;
             this.Size = Size;
             Rec = Instantiate(Data.Main.CameraRenderer).GetComponent<Camera>();
@@ -34,8 +35,8 @@ public class PlanetRenderer : MonoBehaviour
             Mat = new Material(Shader.Find("Unlit/Texture"));
             Mat.mainTexture = Tex;
             Instance.material = Mat;
-            Rec.gameObject.transform.position = Utils.InverseTransformPos(Pos + new Vector2(Size / 2f, Size / 2f), Parent.transform, Parent.Parent.Size)+new Vector2(100, 100);
-            Instance.transform.position = Utils.InverseTransformPos(Pos + new Vector2(Size / 2f, Size / 2f), Parent.transform, Parent.Parent.Size);
+            Rec.gameObject.transform.position = Utils.InverseTransformPos(Pos + new Vector2(Size / 2f, Size / 2f), Renderer.transform, Renderer.What.Size)+new Vector2(100, 100);
+            Instance.transform.position = Utils.InverseTransformPos(Pos + new Vector2(Size / 2f, Size / 2f), Renderer.transform, Renderer.What.Size);
             Instance.transform.localScale = Vector3.one/1000f*((float)Size);
         }
     }
@@ -65,7 +66,7 @@ public class PlanetRenderer : MonoBehaviour
         }
         ShaderCuts[id][ShaderCuts[id].Count - 1].Add(new Vector4(Square.Pos.x, Square.Pos.y, Square.Size, Square.Size));
         Matrix4x4 tf = Matrix4x4.identity;
-        tf.SetTRS((Vector3)Utils.InverseTransformPos(Square.Pos + new Vector2(Square.Size / 2f, Square.Size / 2f), Parent.transform, Parent.Size) + new Vector3(100, 100, 100), Quaternion.Euler(90f, 90f, -90f), new Vector3(Square.Size / 1000f, Square.Size / 1000f, Square.Size / 1000f));
+        tf.SetTRS((Vector3)Utils.InverseTransformPos(Square.Pos + new Vector2(Square.Size / 2f, Square.Size / 2f), What.transform, What.Size) + new Vector3(100, 100, 100), Quaternion.Euler(90f, 90f, -90f), new Vector3(Square.Size / 1000f, Square.Size / 1000f, Square.Size / 1000f));
         Matrices[id][Matrices[id].Count - 1].Add(tf);
     }
     
@@ -96,7 +97,7 @@ public class PlanetRenderer : MonoBehaviour
             for (int dx = -VisionRange; dx < VisionRange + CellSize; dx += CellSize) {
                 for (int dy = -VisionRange; dy < VisionRange + CellSize; dy += CellSize) {
                     Vector2 d = new Vector2(dx, dy);
-                    Vector2 Point = Utils.TransformPos((Vector2)g.transform.position, Parent.transform, Parent.Size) + d;
+                    Vector2 Point = Utils.TransformPos((Vector2)g.transform.position, What.transform, What.Size) + d;
                     bool ok = false;
                     foreach (RenderArea Square in Cells) {
                         if (Utils.PointInSquare(Square.Pos, Square.Size, Point)) {
@@ -113,7 +114,7 @@ public class PlanetRenderer : MonoBehaviour
             }
         }
         if (added.Count>0) {
-            DrawRecursive(Parent.Root, added);
+            DrawRecursive(What.Root, added);
         }
 	}
     
@@ -136,7 +137,7 @@ public class PlanetRenderer : MonoBehaviour
         
         Vector2 Pos = new Vector2(x, y);
         if (LastRes == null) {
-            LastRes = Parent.Root.Locate(Pos);
+            LastRes = What.Root.Locate(Pos);
             return LastRes.Color;
         } else {
             LastRes = LastRes.LocateUp(Pos);
@@ -144,7 +145,7 @@ public class PlanetRenderer : MonoBehaviour
         }
     }
     public PixelState GetPixel(Vector2Int Pos) {
-        return Parent.Root.Locate(Pos).Color;
+        return What.Root.Locate(Pos).Color;
     }
     /// <summary>
     /// Draws a node of a tree (if the node is not a leaf, does nothing)

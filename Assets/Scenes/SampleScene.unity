@@ -135,7 +135,6 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
-  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -378,22 +377,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &519420033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7906ddf468f0fac46b1035a247ad2166, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  planets:
-  - {fileID: 2106544240}
-  addedObjects:
-  - {fileID: 936972973}
 --- !u!1 &619682293
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,7 +545,6 @@ GameObject:
   m_Component:
   - component: {fileID: 936972975}
   - component: {fileID: 936972974}
-  - component: {fileID: 936972973}
   m_Layer: 0
   m_Name: tile042
   m_TagString: Untagged
@@ -570,21 +552,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &936972973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 936972972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9501ae6459bb085489883c78d162e436, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  massCenter: {x: 0, y: 0}
-  mass: 4
-  size: 0.005
 --- !u!212 &936972974
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -861,7 +828,7 @@ GameObject:
   - component: {fileID: 2106544240}
   - component: {fileID: 2106544243}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Planet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -880,7 +847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Size: 1024
-  DebugMode: 1
+  DebugMode: 0
   Renderer: {fileID: 2106544243}
   Biomes: []
   BiomeByPos: 
@@ -968,7 +935,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Parent: {fileID: 2106544240}
   Tracking:
-  - {fileID: 519420028}
-  VisionRange: 2000
-  CellSize: 1024
+  - {fileID: 936972972}
+  VisionRange: 100
+  CellSize: 256
   ToBeRendered: 
