@@ -14,13 +14,15 @@ public class Tree {
     public PixelState Color = null;
 	[HideInInspector]
     public bool rendered = false;
+	[HideInInspector]
+	public bool inRenderQueue = false;
 
     public Tree(Tree Parent, Vector2Int Pos) {
         this.Parent = Parent;
         this.Pos = Pos;
         this.Size = Parent.Size / 2;
         this.Root = Parent.Root;
-        this.Color = Parent.Color;
+        TryUpdate(Parent.Color);
 	}
     /// <summary>
     /// Initialize root of a tree
@@ -30,7 +32,7 @@ public class Tree {
         this.Pos = new Vector2Int(0, 0);
         this.Size = Size;
         this.Root = Root;
-        this.Color = Color;
+		TryUpdate(Color);
 	}
 
     public Rect GetRect()
@@ -38,10 +40,12 @@ public class Tree {
         return new Rect(Utils.InverseTransformPos(Pos, Root.transform, Root.Size), Utils.InverseTransformPos(Pos + new Vector2(Size, Size), Root.transform, Root.Size) - Utils.InverseTransformPos(Pos, Root.transform, Root.Size));
     }
 
-    /// <summary>
-    /// draw biome at this square
-    /// </summary>
-    public ValueTuple<PixelState, bool> BuildBiome(Biome biome = null)
+	/// <summary>
+	/// draw biome at this square
+	/// </summary>
+	/// <param name="biome">biome to draw, or null to use the one from the planet</param>
+	/// <returns></returns>
+	public ValueTuple<PixelState, bool> BuildBiome(Biome biome = null)
     {
         if (biome == null) {
             Vector2 Rad = Pos - new Vector2(Root.Size / 2, Root.Size / 2);
@@ -64,34 +68,15 @@ public class Tree {
             Vector2 Center = new Vector2(Root.Size / 2, Root.Size / 2);
 		    if (Size == 1) {
                 Vector2 Rad = Pos - Center;
-			    if (Root.GetSmoothBiomeValue(new FuncPassType(Rad.x, Rad.y)) > 0) {
+			    if (Root.GetSmoothBiomeValue(new FuncPassType(Rad.x, Rad.y)) > 0) {//TODO: the only recursion exit is getting to size 1, feels bad, no idea how to optimize
 				    return  (new PixelState(0, true), true);
 			    } else {
                     return  (new PixelState(0, false), true);
 			    }
 		    }
-            /*
-             * TODO
-            //Axises never intersect the current square, so the farest point is one of the angles
-            float maxR = 0, minR = Root.Size*Root.Size;
-            foreach (Vector2 Delta in Data.Main.Shifts01) {
-                maxR = Mathf.Max(maxR, (Center - ((Vector2)Pos + Delta * Size)).sqrMagnitude);
-                minR = Mathf.Min(minR, (Center - ((Vector2)Pos + Delta * Size)).sqrMagnitude);
-            }
-            maxR = Mathf.Sqrt(maxR);
-            minR = Mathf.Sqrt(minR);
-            if (biome.Floor.get(0, minR)+biome.Amplitude < 0) {
-                return  (new PixelState(0, false), true);
-            }
-            if (biome.Floor.get(0, maxR)-biome.Amplitude > 0) {
-
-				return  (new PixelState(0, true), true);
-            }
-            */
         }
         if (Color != null)
-            InitChildren(Color);
-        Color = null;
+			InitChildren();
 		ValueTuple<PixelState, bool>[] Returned = { (null, false), (null, false), (null, false), (null, false) };
         bool ok = true;
 		for (int i = 0; i < 4; i++) {
@@ -111,14 +96,18 @@ public class Tree {
 		return  (Color, false);
 	}
 
-	private void InitChildren(PixelState NewColor) {
-        if (NewColor == null) {
+    /// <summary>
+    /// creates children in the tree and propagates the color to them
+    /// </summary>
+	private void InitChildren() {
+        if (Color == null) {
             Debug.LogError("Color not defined");
             return;
         }
         for (int i = 0; i < Children.Length; i++) {
             Children[i] = new Tree(this, Pos + Data.Main.Shifts01[i] * (Size / 2));
         }
+        Color = null;
     }
 
     /// <summary>
@@ -162,10 +151,18 @@ public class Tree {
         }
         Color = NewColor;
         Children = new Tree[4];
-        Root.Renderer.Draw(this);//TODO
+		Root.Renderer.Draw(this);//TODO
     }
 
-    public ValueTuple<PixelState, bool> CircleFill(Vector2 Center, float R, PixelState NewColor) {
+	private void TryUpdate(PixelState NewColor)
+	{
+		if (NewColor == null) {
+			return;
+		}
+		Update(NewColor);
+	}
+
+	public ValueTuple<PixelState, bool> CircleFill(Vector2 Center, float R, PixelState NewColor) {
         if (NewColor == null) {
             Debug.LogError("Color not defined");
             return (null, false);
@@ -204,8 +201,7 @@ public class Tree {
 			}
         }
         if(Color!=null)
-            InitChildren(Color);
-        Color = null;
+            InitChildren();
 		ValueTuple<PixelState, bool>[] Returned = { (null, false), (null, false), (null, false), (null, false) };
         bool ok = true;
         for (int i = 0; i<4; i++) {
@@ -251,8 +247,7 @@ public class Tree {
 			return  (Color, false);
 		}
         if (Color != null)
-            InitChildren(Color);
-        Color = null;
+            InitChildren();
 		ValueTuple<PixelState, bool>[] Returned = { (null, false), (null, false), (null, false), (null, false) };
         bool ok = true;
         for (int i = 0; i < 4; i++) {

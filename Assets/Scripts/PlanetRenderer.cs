@@ -9,10 +9,14 @@ public class PlanetRenderer : MonoBehaviour
     public List<GameObject> Tracking;
     public int VisionRange;
     public int CellSize;// must be a big enough power of 2, more than VisionRange*2
-    public List<RenderArea> Cells = new List<RenderArea>();
+	private const int RenderBatchSize = 1023;
+    private Vector3 RendererShift = new Vector3(100, 100, 100);
 
+	public List<RenderArea> Cells = new List<RenderArea>();
 
     private List<Tree> DelayedDraw = new List<Tree>();
+
+    //Shader params for squares being rendered
     private List<List<List<Matrix4x4>>> Matrices = new List<List<List<Matrix4x4>>>();
     private List<List<List<Vector4>>> ShaderCuts = new List<List<List<Vector4>>>();
     private Queue<int> DrawOrder = new Queue<int>();
@@ -21,9 +25,9 @@ public class PlanetRenderer : MonoBehaviour
         private RenderTexture Tex;
         private Camera Rec;
         private Material Mat;
-        private Vector2Int Pos;
+        public Vector2Int Pos;
         private MeshRenderer Instance;
-        private int Size;
+        public int Size;
         public RenderArea(Vector2Int Pos, int Size, PlanetRenderer Renderer) {
             this.Pos = Pos;
             this.Size = Size;
@@ -46,11 +50,11 @@ public class PlanetRenderer : MonoBehaviour
             Matrices.Add(new List<List<Matrix4x4>>());
             ShaderCuts.Add(new List<List<Vector4>>());
             ToBeRendered.Add(false);
-            BasicPlane = Data.Main.EmptySprite.GetComponent<MeshFilter>().mesh;
         }
-    }
+		BasicPlane = Data.Main.EmptySprite.GetComponent<MeshFilter>().mesh;
+	}
 
-    void AddToRenderQueue(Tree Square) {
+    private void AddToRenderQueue(Tree Square) {
         int id = Square.Color.TextureID;
         if (Square.Color.Active == false)
             id = 1;
@@ -60,13 +64,13 @@ public class PlanetRenderer : MonoBehaviour
             Matrices[id].Add(new List<Matrix4x4>());
             ShaderCuts[id].Add(new List<Vector4>());
         }
-        if (ShaderCuts[id][ShaderCuts[id].Count - 1].Count == 1023) {
+        if (ShaderCuts[id][ShaderCuts[id].Count - 1].Count == RenderBatchSize) {
             Matrices[id].Add(new List<Matrix4x4>());
             ShaderCuts[id].Add(new List<Vector4>());
         }
         ShaderCuts[id][ShaderCuts[id].Count - 1].Add(new Vector4(Square.Pos.x, Square.Pos.y, Square.Size, Square.Size));
         Matrix4x4 tf = Matrix4x4.identity;
-        tf.SetTRS((Vector3)Utils.InverseTransformPos(Square.Pos + new Vector2(Square.Size / 2f, Square.Size / 2f), What.transform, What.Size) + new Vector3(100, 100, 100), Quaternion.Euler(90f, 90f, -90f), new Vector3(Square.Size / 1000f, Square.Size / 1000f, Square.Size / 1000f));
+        tf.SetTRS((Vector3)Utils.InverseTransformPos(Square.Pos + new Vector2(Square.Size / 2f, Square.Size / 2f), What.transform, What.Size) + RendererShift, Quaternion.Euler(90f, 90f, -90f), new Vector3(Square.Size / 1000f, Square.Size / 1000f, Square.Size / 1000f));
         Matrices[id][Matrices[id].Count - 1].Add(tf);
     }
     
@@ -74,19 +78,19 @@ public class PlanetRenderer : MonoBehaviour
         foreach(Tree Square in DelayedDraw) {
             if (!Square.rendered) {
                 Square.rendered = true;
+                if (Square.Color == null)
+                    continue;
                 foreach (RenderArea Cell in Cells) {
                     Tuple<Vector2, Vector2> Box = Utils.SquaresIntersect(Square.Pos, Square.Size, Cell.Pos, Cell.Size);
                     if (Box == null) continue;
-                    if (Square.Color != null) {
-                        AddToRenderQueue(Square);
-                        break;
-                    }
-                    else break;
+                    AddToRenderQueue(Square);
+                    break;//all render areas capture simultaneously, so it is never needed to render twice
                 }
             }
         }
         foreach (Tree Square in DelayedDraw) {
             Square.rendered = false;
+            Square.inRenderQueue= false;
         }
         DelayedDraw.Clear();
         Render();
@@ -114,11 +118,11 @@ public class PlanetRenderer : MonoBehaviour
             }
         }
         if (added.Count>0) {
-            DrawRecursive(What.Root, added);
+            DrawRecursive(What.Root, added);//TODO:optimize
         }
 	}
     
-    void Render() {
+    private void Render() {
         foreach (int id in DrawOrder) {
             for (int id2 = 0; id2 < ShaderCuts[id].Count; id2++) {
                 ToBeRendered[id] = false;
@@ -155,6 +159,7 @@ public class PlanetRenderer : MonoBehaviour
     /// <param name="areas"></param>
     public void Draw(Tree Square) {
         DelayedDraw.Add(Square);
+        Square.inRenderQueue = true;
     }
     /// <summary>
     /// Draws a node of a tree (and children if the node is not filled)
@@ -162,7 +167,7 @@ public class PlanetRenderer : MonoBehaviour
     /// </summary>
     /// <param name="Square"></param>
     /// <param name="areas"></param>
-    public void DrawRecursive(Tree Square, List<RenderArea> areas) {
+    private void DrawRecursive(Tree Square, List<RenderArea> areas) {
         foreach (RenderArea Cell in areas) {
             Tuple<Vector2, Vector2> Box = Utils.SquaresIntersect(Square.Pos, Square.Size, Cell.Pos, Cell.Size);
             if (Box == null) continue;
