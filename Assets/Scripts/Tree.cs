@@ -110,6 +110,15 @@ public class Tree {
         Color = null;
     }
 
+    private void Delete()
+    {
+        if (Color == null) {
+            for(int i = 0; i<Children.Length; i++) {
+                Children[i].Delete();
+            }
+        }
+    }
+
     /// <summary>
     /// find a leaf containing given point
     /// </summary>
@@ -160,6 +169,15 @@ public class Tree {
 			return;
 		}
 		Update(NewColor);
+	}
+
+	private void ForceUpdate(PixelState NewColor)
+	{
+		if (NewColor == null) {
+			Debug.LogError("Color not defined");
+			return;
+		}
+        Update(NewColor);
 	}
 
 	public ValueTuple<PixelState, bool> CircleFill(Vector2 Center, float R, PixelState NewColor) {
