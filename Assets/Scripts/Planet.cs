@@ -67,6 +67,10 @@ public class Planet : MonoBehaviour {
         }
         BiomeByPos[Length] = Biomes.Count-1;
     }
+    /// <summary>
+    /// get pixel state by position
+    /// </summary>
+    /// <param name="data">Position</param>
     public float GetSmoothBiomeValue(FuncPassType data)
     {
         float polarX = (Mathf.Atan2(data.y, data.x) + Mathf.PI) * PlanetRadius;
@@ -90,6 +94,10 @@ public class Planet : MonoBehaviour {
 		}
         return Biomes[biomeID].get(new FuncPassType(data.x, data.y, PlanetRadius, Biomes[biomeID].LeftEdge + 0.5f * Biomes[biomeID].Size));
 	}
+
+    /// <summary>
+    /// Apply edge modification
+    /// </summary>
     public void Transform(List<EdgePoint> Edge, List<Vector2> NewEdge) {
         float Delta = ((float)Edge.Count) / (NewEdge.Count - 1);
         int Last = 0;
@@ -120,8 +128,12 @@ public class Planet : MonoBehaviour {
             Root.TriangleFill(NewEdgeResized[i - 1], NewEdgeResized[i], Edge[i].Point, new PixelState(0, true));
         }
     }
-
-    private Vector2Int _getClosestEdge(Vector2Int Point, int R) {
+	/// <summary>
+	/// get edge point (filled\not filled)
+	/// </summary>
+	/// <param name="Point">Where</param>
+	/// <param name="R">Max distance to edge</param>
+	private Vector2Int _getClosestEdge(Vector2Int Point, int R) {
         Vector2Int Ans = new Vector2Int(-1, -1);
         for (int x = -R; x< R; x++) {
             for (int y = -R; y < R; y++) {
@@ -136,6 +148,12 @@ public class Planet : MonoBehaviour {
         return Ans;
     }
 
+    /// <summary>
+    /// get planet edge in position
+    /// </summary>
+    /// <param name="Point">Edge center position</param>
+    /// <param name="Length">Edge length</param>
+    /// <param name="R">Max distance to edge</param>
     List<EdgePoint> GetEdge(Vector2Int Point, int Length, int R) {
         Point = _getClosestEdge(Point, R);
         if (Point.x == -1 && Point.y == -1)

@@ -6,33 +6,37 @@ public class Tree {
     //structure
     public Tree Parent = null;
     public Planet Root = null;
-    public Tree[] Children = new Tree[4];//numbered as basic quarters of the plane (right-up, left-up, left-down, right-down)
+	public Tree[] Children = new Tree[4];//numbered as basic quarters of the plane (right-up, left-up, left-down, right-down)
     //shape
 	public Vector2Int Pos = new Vector2Int(0, 0);
     public int Size = 0;
     //contents
     public PixelState Color = null;
 	[HideInInspector]
-    public bool rendered = false;
+    public bool finishedRender = false; 
 	[HideInInspector]
 	public bool inRenderQueue = false;
 
-    public Tree(Tree Parent, Vector2Int Pos) {
+    public Tree(Tree Parent, Vector2Int Pos, bool render = true) {
         this.Parent = Parent;
         this.Pos = Pos;
         this.Size = Parent.Size / 2;
         this.Root = Parent.Root;
-        TryUpdate(Parent.Color);
+        this.Color = Parent.Color;
+        if(render)
+            TryUpdate(Parent.Color);
 	}
     /// <summary>
     /// Initialize root of a tree
     /// </summary>
-    public Tree(int Size, Planet Root, PixelState Color) {
+    public Tree(int Size, Planet Root, PixelState Color, bool render = true) {
         this.Parent = null;
         this.Pos = new Vector2Int(0, 0);
         this.Size = Size;
         this.Root = Root;
-		TryUpdate(Color);
+		this.Color = Color;
+		if (render)
+			TryUpdate(Color);
 	}
 
     public Rect GetRect()
@@ -76,7 +80,7 @@ public class Tree {
 		    }
         }
         if (Color != null)
-			InitChildren();
+			InitChildren(false);
 		ValueTuple<PixelState, bool>[] Returned = { (null, false), (null, false), (null, false), (null, false) };
         bool ok = true;
 		for (int i = 0; i < 4; i++) {
@@ -91,32 +95,23 @@ public class Tree {
         }
 		for (int i = 0; i < 4; i++) {
 			if (Returned[i].Item2)
-				Children[i].Update(Returned[i].Item1);
+				Children[i].Update(Returned[i].Item1);//TODO:Breaks if the whole planet is single-colored
 		}
-		return  (Color, false);
+		return  (null, false);
 	}
 
     /// <summary>
     /// creates children in the tree and propagates the color to them
     /// </summary>
-	private void InitChildren() {
+	private void InitChildren(bool render = true) {
         if (Color == null) {
             Debug.LogError("Color not defined");
             return;
         }
         for (int i = 0; i < Children.Length; i++) {
-            Children[i] = new Tree(this, Pos + Data.Main.Shifts01[i] * (Size / 2));
+            Children[i] = new Tree(this, Pos + Data.Main.Shifts01[i] * (Size / 2), render);
         }
         Color = null;
-    }
-
-    private void Delete()
-    {
-        if (Color == null) {
-            for(int i = 0; i<Children.Length; i++) {
-                Children[i].Delete();
-            }
-        }
     }
 
     /// <summary>
@@ -152,32 +147,27 @@ public class Tree {
         }
         else return Parent.LocateUp(Point);
     }
-
+    /// <summary>
+    /// Fill square with a color (deletes children, if any)
+    /// </summary>
     private void Update(PixelState NewColor) {
         if (NewColor == null) {
             Debug.LogError("Color not defined");
             return;
         }
-        Color = NewColor;
+		Color = NewColor;
         Children = new Tree[4];
 		Root.Renderer.Draw(this);//TODO
     }
-
+	/// <summary>
+	/// Fill square with a color (deletes children, if any)
+	/// </summary>
 	private void TryUpdate(PixelState NewColor)
 	{
 		if (NewColor == null) {
 			return;
 		}
 		Update(NewColor);
-	}
-
-	private void ForceUpdate(PixelState NewColor)
-	{
-		if (NewColor == null) {
-			Debug.LogError("Color not defined");
-			return;
-		}
-        Update(NewColor);
 	}
 
 	public ValueTuple<PixelState, bool> CircleFill(Vector2 Center, float R, PixelState NewColor) {
@@ -219,7 +209,7 @@ public class Tree {
 			}
         }
         if(Color!=null)
-            InitChildren();
+            InitChildren(false);
 		ValueTuple<PixelState, bool>[] Returned = { (null, false), (null, false), (null, false), (null, false) };
         bool ok = true;
         for (int i = 0; i<4; i++) {
@@ -265,7 +255,7 @@ public class Tree {
 			return  (Color, false);
 		}
         if (Color != null)
-            InitChildren();
+            InitChildren(false);
 		ValueTuple<PixelState, bool>[] Returned = { (null, false), (null, false), (null, false), (null, false) };
         bool ok = true;
         for (int i = 0; i < 4; i++) {

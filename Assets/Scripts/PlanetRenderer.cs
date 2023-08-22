@@ -13,6 +13,8 @@ public class PlanetRenderer : MonoBehaviour
     private Vector3 RendererShift = new Vector3(100, 100, 100);
 
 	public List<RenderArea> Cells = new List<RenderArea>();
+    public int TicksPerClear = 30;
+    private int Ticks = 0;
 
     private List<Tree> DelayedDraw = new List<Tree>();
 
@@ -42,6 +44,11 @@ public class PlanetRenderer : MonoBehaviour
             Rec.gameObject.transform.position = Utils.InverseTransformPos(Pos + new Vector2(Size / 2f, Size / 2f), Renderer.transform, Renderer.What.Size)+new Vector2(100, 100);
             Instance.transform.position = Utils.InverseTransformPos(Pos + new Vector2(Size / 2f, Size / 2f), Renderer.transform, Renderer.What.Size);
             Instance.transform.localScale = Vector3.one/1000f*((float)Size);
+        }
+        public void Destroy()
+        {
+            UnityEngine.Object.Destroy(Instance.gameObject);
+			UnityEngine.Object.Destroy(Rec.gameObject);
         }
     }
     Mesh BasicPlane;
@@ -75,9 +82,10 @@ public class PlanetRenderer : MonoBehaviour
     }
     
     private void FixedUpdate() {
+        Ticks++;
         foreach(Tree Square in DelayedDraw) {
-            if (!Square.rendered) {
-                Square.rendered = true;
+            if (!Square.finishedRender) {
+                Square.finishedRender = true;
                 if (Square.Color == null)
                     continue;
                 foreach (RenderArea Cell in Cells) {
@@ -89,7 +97,7 @@ public class PlanetRenderer : MonoBehaviour
             }
         }
         foreach (Tree Square in DelayedDraw) {
-            Square.rendered = false;
+            Square.finishedRender = false;
             Square.inRenderQueue= false;
         }
         DelayedDraw.Clear();
@@ -119,6 +127,22 @@ public class PlanetRenderer : MonoBehaviour
         }
         if (added.Count>0) {
             DrawRecursive(What.Root, added);//TODO:optimize
+        }
+        
+        if(Ticks%TicksPerClear==0) {
+			List<RenderArea> newCells = new List<RenderArea>();
+			foreach (RenderArea area in Cells) {
+                bool needed = false;
+                foreach(GameObject g in Tracking) {
+                    if(Utils.Distance(Utils.TransformPos((Vector2)g.transform.position, What.transform, What.Size), area.Pos)<(VisionRange+CellSize)*1.5f) { needed = true; break; }
+                }
+                if(needed) {
+                    newCells.Add(area);
+                } else {
+                    area.Destroy();
+                }
+            }
+            Cells = newCells;
         }
 	}
     
@@ -158,7 +182,8 @@ public class PlanetRenderer : MonoBehaviour
     /// <param name="Square"></param>
     /// <param name="areas"></param>
     public void Draw(Tree Square) {
-        DelayedDraw.Add(Square);
+        if(!Square.inRenderQueue)
+            DelayedDraw.Add(Square);
         Square.inRenderQueue = true;
     }
     /// <summary>

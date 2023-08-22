@@ -933,9 +933,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ffa7de78663eb543b68b79bc4dc4389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Parent: {fileID: 2106544240}
+  What: {fileID: 2106544240}
   Tracking:
   - {fileID: 936972972}
   VisionRange: 100
-  CellSize: 256
-  ToBeRendered: 
+  CellSize: 32
+  TicksPerClear: 10
